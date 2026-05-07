@@ -18,6 +18,7 @@
 html {
   scroll-behavior: smooth;
   overflow-x: clip;
+  width: 100%;
 }
 
 body {
@@ -48,9 +49,10 @@ svg {
 .site-header,
 .site-footer,
 main {
-  width: min(1180px, calc(100% - 40px));
+  width: 100%;
+  max-width: 1180px;
+  padding-inline: 20px;
   margin: 0 auto;
-  max-width: 100%;
 }
 
 .site-header {
@@ -491,12 +493,12 @@ p {
 
   .site-header,
   .site-footer {
-    width: min(1180px, calc(100% - 28px));
+    padding-inline: 14px;
   }
 
   main {
-    width: min(1180px, calc(100% - 28px));
     margin: 0 auto;
+    padding-inline: 14px;
   }
 
   h1 {
@@ -587,6 +589,13 @@ p {
     padding-top: 24px;
   }
 
+  .section,
+  .section.show {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
   .hero-copy,
   .hero-panel,
   .cta,
@@ -619,7 +628,7 @@ p {
   .site-header,
   .site-footer,
   main {
-    width: min(1180px, calc(100% - 20px));
+    padding-inline: 10px;
   }
 
   .hero-copy,
