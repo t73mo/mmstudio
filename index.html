@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Макетная мастерская полного цикла. Архитектурные, промышленные и выставочные макеты для девелоперов, проектных бюро и производителей.">
 <title>MM Studio | Макетная мастерская</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Unbounded:wght@500;700&display=swap" rel="stylesheet">
@@ -13,14 +14,20 @@
 <body>
 <header class="site-header">
   <a class="brand" href="index.html">
-    <span class="brand-mark">MM</span>
+    <img class="brand-logo" src="assets/logo-mmstudio.svg" alt="Логотип MM Studio">
     <span class="brand-text">
       <strong>MM Studio</strong>
       <span>Макетная мастерская</span>
     </span>
   </a>
 
-  <nav class="site-nav">
+  <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Открыть меню">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+
+  <nav class="site-nav" id="site-nav">
     <a href="index.html" aria-current="page">Главная</a>
     <a href="about.html">О мастерской</a>
     <a href="portfolio.html">Портфолио</a>
