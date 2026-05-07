@@ -17,6 +17,7 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: clip;
 }
 
 body {
@@ -29,10 +30,19 @@ body {
     radial-gradient(circle at 80% 20%, rgba(215, 196, 164, 0.9), transparent 24%),
     linear-gradient(180deg, #f8f3ea 0%, var(--bg) 56%, #ece3d3 100%);
   min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
+  overscroll-behavior-x: none;
+  touch-action: pan-y;
 }
 
 a {
   color: inherit;
+}
+
+img,
+svg {
+  max-width: 100%;
 }
 
 .site-header,
@@ -40,6 +50,7 @@ a {
 main {
   width: min(1180px, calc(100% - 40px));
   margin: 0 auto;
+  max-width: 100%;
 }
 
 .site-header {
@@ -165,6 +176,7 @@ main {
 .portfolio-stack {
   display: grid;
   gap: 24px;
+  min-width: 0;
 }
 
 .hero {
@@ -324,6 +336,7 @@ p {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 18px;
+  min-width: 0;
 }
 
 .card,
@@ -458,6 +471,7 @@ p {
   gap: 18px;
   padding: 10px 0 36px;
   font-size: 0.95rem;
+  min-width: 0;
 }
 
 .site-footer p:first-child {
