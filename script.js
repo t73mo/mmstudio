@@ -2,6 +2,7 @@ const sections = document.querySelectorAll(".section");
 const navToggle = document.querySelector(".nav-toggle");
 const siteHeader = document.querySelector(".site-header");
 const navLinks = document.querySelectorAll(".site-nav a");
+const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 if (navToggle && siteHeader) {
   navToggle.addEventListener("click", () => {
@@ -25,7 +26,9 @@ if (navToggle && siteHeader) {
   });
 }
 
-if ("IntersectionObserver" in window) {
+if (prefersReducedMotion || !("IntersectionObserver" in window)) {
+  sections.forEach(section => section.classList.add("show"));
+} else {
   const observer = new IntersectionObserver(
     entries => {
       entries.forEach(entry => {
@@ -36,12 +39,10 @@ if ("IntersectionObserver" in window) {
       });
     },
     {
-      threshold: 0.15,
-      rootMargin: "0px 0px -40px 0px"
+      threshold: 0.12,
+      rootMargin: "0px 0px -32px 0px"
     }
   );
 
   sections.forEach(section => observer.observe(section));
-} else {
-  sections.forEach(section => section.classList.add("show"));
 }
