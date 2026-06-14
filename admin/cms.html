@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>CMS - Управление сайтом | MM Studio</title>
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Unbounded:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script>
+var c="";
+if(localStorage.getItem("admin_auth")==="1")c="auth-ok";
+if(localStorage.getItem("mm_theme")==="dark"||(c&&!localStorage.getItem("mm_theme")&&window.matchMedia&&window.matchMedia("(prefers-color-scheme:dark)").matches))c+=" dark";
+if(c)document.documentElement.className=c;
+</script>
+<style>
+.auth-ok #loginScreen{display:none!important}.auth-ok #adminPanel{display:flex!important}
+.cms-tabs{display:flex;gap:4px;margin-bottom:16px;flex-wrap:wrap}
+.cms-tab{padding:8px 14px;border:1px solid var(--border);border-radius:8px;background:var(--surface);cursor:pointer;font-size:0.78rem;font-family:inherit;color:var(--muted);-webkit-tap-highlight-color:transparent;transition:background .15s}
+.cms-tab:hover,.cms-tab:active{background:var(--hover)}
+.cms-tab.active{background:var(--text);color:var(--bg);border-color:var(--text)}
+.cms-section{display:none}
+.cms-section.active{display:block}
+.cms-field{margin-bottom:12px}
+.cms-field label{display:block;font-size:0.72rem;color:var(--muted);margin-bottom:3px;font-weight:500}
+.cms-field input,.cms-field textarea{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:0.85rem;font-family:inherit;outline:none;background:var(--bg);color:var(--text);-webkit-appearance:none}
+.cms-field input:focus,.cms-field textarea:focus{border-color:var(--text)}
+.cms-field textarea{min-height:60px;resize:vertical}
+.cms-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px}
+.cms-card h3{font-size:0.82rem;margin-bottom:10px;font-family:"Unbounded",sans-serif}
+.cms-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:600px){.cms-row{grid-template-columns:1fr}}
+.cms-actions{display:flex;gap:8px;margin-top:12px}
+.cms-btn{padding:10px 16px;border-radius:8px;font-size:0.82rem;font-family:inherit;cursor:pointer;font-weight:600;border:none;-webkit-tap-highlight-color:transparent}
+.cms-btn-primary{background:var(--text);color:var(--bg)}
+.cms-btn-primary:active{opacity:.85}
+.cms-btn-secondary{background:var(--surface);color:var(--muted);border:1px solid var(--border)}
+.cms-btn-secondary:active{background:var(--hover)}
+.cms-btn-danger{background:rgba(204,0,0,.1);color:#c00;border:1px solid rgba(204,0,0,.3)}
+.cms-btn-danger:active{background:rgba(204,0,0,.2)}
+.portfolio-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px;display:flex;gap:12px;align-items:flex-start}
+.portfolio-item img{width:80px;height:60px;object-fit:cover;border-radius:6px;flex-shrink:0}
+.portfolio-item-info{flex:1;min-width:0}
+.portfolio-item-info h4{font-size:0.82rem;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.portfolio-item-info p{font-size:0.72rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.portfolio-item-actions{display:flex;gap:4px;flex-shrink:0}
+.saved-badge{display:inline-block;padding:4px 10px;background:#4caf50;color:#fff;border-radius:6px;font-size:0.72rem;margin-left:8px;animation:fadeOut 2s forwards}
+@keyframes fadeOut{0%,70%{opacity:1}100%{opacity:0}}
+</style>
+</head><body>
+<div class="login-screen" id="loginScreen">
+<div class="login-box"><h1>MM Studio</h1><p>Админ-панель</p>
+<input type="text" id="usernameInput" placeholder="Логин" autofocus>
+<input type="password" id="passwordInput" placeholder="Пароль">
+<button onclick="login()">Войти</button>
+<div class="login-error" id="loginError">Неверный логин или пароль</div>
+</div></div>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+<div class="admin" id="adminPanel">
+<nav class="sidebar" id="sidebar"><div class="sidebar-header"><h1>MM Studio</h1><p>Админ-панель</p></div><div class="sidebar-nav"><a class="nav-item" href="index.html"><span class="material-icons">home</span><span class="nav-item-text">Главная</span></a><div class="nav-section"><div class="nav-section-title">Бизнес</div><a class="nav-item" href="plan.html"><span class="material-icons">business_center</span><span class="nav-item-text">План</span></a><a class="nav-item" href="prices.html"><span class="material-icons">business_center</span><span class="nav-item-text">Цены</span></a><a class="nav-item" href="proposals.html"><span class="material-icons">business_center</span><span class="nav-item-text">Идеи</span></a></div><div class="nav-section"><div class="nav-section-title">Мастерская</div><a class="nav-item" href="inventory.html"><span class="material-icons">build</span><span class="nav-item-text">Инструменты</span></a><a class="nav-item" href="machines.html"><span class="material-icons">build</span><span class="nav-item-text">Станки</span></a><a class="nav-item" href="materials.html"><span class="material-icons">build</span><span class="nav-item-text">Материалы</span></a></div><div class="nav-section"><div class="nav-section-title">Цифровое</div><a class="nav-item" href="print3d.html"><span class="material-icons">memory</span><span class="nav-item-text">3D печать</span></a><a class="nav-item" href="marketing.html"><span class="material-icons">memory</span><span class="nav-item-text">Маркетинг</span></a></div><div class="nav-section"><div class="nav-section-title">Сайт</div><a class="nav-item active" href="cms.html"><span class="material-icons">edit_document</span><span class="nav-item-text">CMS</span></a></div></div><div class="theme-toggle" onclick="toggleTheme()"><span class="material-icons" id="themeIcon">dark_mode</span><span id="themeLabel">Тёмная тема</span></div><div class="sidebar-footer"><button onclick="expandAll()">+</button><button onclick="collapseAll()">-</button><button onclick="logout()">Выйти</button></div></nav>
+<div class="main"><div class="main-header"><button class="burger" onclick="toggleSidebar()">&#9776;</button><button class="back-btn" onclick="goBack()" title="Назад">&#8592;</button><div class="main-title">CMS - Управление сайтом</div><div class="profile-badge"><span class="material-icons" style="font-size:14px">person</span> <span class="user-name"></span></div></div><div class="main-content">
+
+<div class="cms-tabs">
+  <button class="cms-tab active" onclick="showTab('portfolio')">Портфолио</button>
+  <button class="cms-tab" onclick="showTab('contacts')">Контакты</button>
+  <button class="cms-tab" onclick="showTab('texts')">Тексты</button>
+  <button class="cms-tab" onclick="showTab('prices')">Цены</button>
+</div>
+
+<div id="cms-portfolio" class="cms-section active">
+  <div class="cms-card"><h3>Портфолио</h3><div id="portfolioList"></div>
+  <div class="cms-actions"><button class="cms-btn cms-btn-primary" onclick="addPortfolioItem()">+ Добавить проект</button></div></div>
+</div>
+
+<div id="cms-contacts" class="cms-section">
+  <div class="cms-card"><h3>Контакты</h3>
+    <div class="cms-row"><div class="cms-field"><label>Телефон</label><input id="c_phone"></div><div class="cms-field"><label>Email</label><input id="c_email"></div></div>
+    <div class="cms-row"><div class="cms-field"><label>Город</label><input id="c_city"></div><div class="cms-field"><label>График</label><input id="c_schedule"></div></div>
+    <div class="cms-row"><div class="cms-field"><label>Telegram (ссылка)</label><input id="c_telegram"></div><div class="cms-field"><label>WhatsApp (ссылка)</label><input id="c_whatsapp"></div></div>
+    <div class="cms-field"><label>Instagram (ссылка)</label><input id="c_instagram"></div>
+    <div class="cms-actions"><button class="cms-btn cms-btn-primary" onclick="saveContacts()">Сохранить</button></div>
+  </div>
+</div>
+
+<div id="cms-texts" class="cms-section">
+  <div id="textsContainer"></div>
+</div>
+
+<div id="cms-prices" class="cms-section">
+  <div id="pricesContainer"></div>
+</div>
+
+</div></div></div>
+<div id="toast"></div>
+<div class="modal-overlay" id="editModal" onclick="if(event.target===this)closeEditModal()"><div class="modal" id="modalBody"></div></div>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+<script>
+var USERS={"Telman":"Kn0pKa78","Anastasia":"mm2026"};
+var DB=null;
+var FIREBASE_CFG={apiKey:"AIzaSyD3XHJ3xdeJC_ALeIK4nOf1EASO39W3Gh0",authDomain:"mmstudio-86917.firebaseapp.com",databaseURL:"https://mmstudio-86917-default-rtdb.europe-west1.firebasedatabase.app",projectId:"mmstudio-86917",storageBucket:"mmstudio-86917.firebasestorage.app",messagingSenderId:"466384625481",appId:"1:466384625481:web:fb4bb7144d0d329be8c498"};
+function initFirebase(){if(typeof firebase!=="undefined"&&!firebase.apps.length){firebase.initializeApp(FIREBASE_CFG);DB=firebase.database();}}
+function login(){var u=document.getElementById("usernameInput").value;var p=document.getElementById("passwordInput").value;if(USERS[u]&&USERS[u]===p){document.getElementById("loginScreen").style.display="none";document.getElementById("adminPanel").style.display="flex";localStorage.setItem("admin_auth","1");localStorage.setItem("admin_user",u);showUser();initFirebase();loadAll();}else document.getElementById("loginError").style.display="block";}
+function logout(){localStorage.removeItem("admin_auth");localStorage.removeItem("admin_user");window.location.href="cms.html";}
+function showUser(){var u=localStorage.getItem("admin_user");document.querySelectorAll(".user-name").forEach(function(e){if(u)e.textContent=u;});}
+function toggleSidebar(){document.getElementById("sidebar").classList.toggle("open");var o=document.getElementById("sidebarOverlay");if(o)o.classList.toggle("open");}
+function closeSidebar(){document.getElementById("sidebar").classList.remove("open");var o=document.getElementById("sidebarOverlay");if(o)o.classList.remove("open");}
+function goBack(){if(window.history.length>1){window.history.back();}else{window.location.href="index.html";}}
+function toggleTheme(){document.documentElement.classList.toggle("dark");var isDark=document.documentElement.classList.contains("dark");localStorage.setItem("mm_theme",isDark?"dark":"light");updateThemeIcon();}
+function updateThemeIcon(){var isDark=document.documentElement.classList.contains("dark");var ic=document.getElementById("themeIcon");var lb=document.getElementById("themeLabel");if(ic)ic.textContent=isDark?"light_mode":"dark_mode";if(lb)lb.textContent=isDark?"Светлая тема":"Тёмная тема";}
+function applyTheme(){var t=localStorage.getItem("mm_theme");if(t==="dark"){document.documentElement.classList.add("dark");}else if(!t){if(window.matchMedia&&window.matchMedia("(prefers-color-scheme:dark)").matches){document.documentElement.classList.add("dark");}}updateThemeIcon();}
+function toast(t){var d=document.getElementById("toast");d.textContent=t;d.style.opacity="1";setTimeout(function(){d.style.opacity="0";},2000);}
+function escHtml(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function expandAll(){document.querySelectorAll(".acc-group").forEach(function(g){g.classList.add("open");});}
+function collapseAll(){document.querySelectorAll(".acc-group, .acc-item").forEach(function(e){e.classList.remove("open");});}
+
+function showTab(name){
+  document.querySelectorAll(".cms-tab").forEach(function(t){t.classList.remove("active");});
+  document.querySelectorAll(".cms-section").forEach(function(s){s.classList.remove("active");});
+  event.target.classList.add("active");
+  document.getElementById("cms-"+name).classList.add("active");
+}
+
+var siteData={};
+function loadAll(){
+  if(!DB)return;
+  DB.ref("site").on("value",function(snap){
+    siteData=snap.val()||{};
+    renderPortfolio();
+    renderContacts();
+    renderTexts();
+    renderPrices();
+  });
+}
+
+function renderPortfolio(){
+  var list=document.getElementById("portfolioList");
+  if(!list||!siteData.portfolio)return;
+  var items=siteData.portfolio;
+  var html="";
+  for(var i=0;i<items.length;i++){
+    var it=items[i];
+    html+='<div class="portfolio-item"><img src="'+escHtml(it.image||"")+'" onerror="this.style.display=\'none\'"><div class="portfolio-item-info"><h4>'+escHtml(it.title||"Без названия")+'</h4><p>'+escHtml(it.type||"")+' | '+escHtml(it.meta||"")+'</p></div><div class="portfolio-item-actions"><button class="btn-icon" onclick="editPortfolioItem('+i+')" title="Редактировать">&#9998;</button><button class="btn-icon btn-del" onclick="deletePortfolioItem('+i+')" title="Удалить">&#10005;</button></div></div>';
+  }
+  list.innerHTML=html||'<p class="empty-state">Нет проектов</p>';
+}
+
+function editPortfolioItem(idx){
+  var it=siteData.portfolio[idx];
+  var html='<h3>Редактировать проект</h3>';
+  var fields=[["title","Название"],["type","Тип"],["meta","Мета"],["desc","Описание"],["task","Задача"],["solution","Решение"],["image","URL изображения"]];
+  for(var i=0;i<fields.length;i++){
+    var f=fields[i];
+    html+='<div class="cms-field"><label>'+f[1]+'</label><input id="pf_'+f[0]+'" value="'+escHtml(it[f[0]]||"")+'"></div>';
+  }
+  html+='<div class="cms-actions"><button class="cms-btn cms-btn-secondary" onclick="closeEditModal()">Отмена</button><button class="cms-btn cms-btn-primary" onclick="savePortfolioItem('+idx+')">Сохранить</button></div>';
+  document.getElementById("modalBody").innerHTML=html;
+  document.getElementById("editModal").style.display="flex";
+}
+
+function savePortfolioItem(idx){
+  var fields=["title","type","meta","desc","task","solution","image"];
+  var update={};
+  for(var i=0;i<fields.length;i++){
+    update[fields[i]]=document.getElementById("pf_"+fields[i]).value;
+  }
+  DB.ref("site/portfolio/"+idx).update(update);
+  closeEditModal();toast("Сохранено");
+}
+
+function addPortfolioItem(){
+  var item={title:"Новый проект",type:"",meta:"",desc:"",task:"",solution:"",image:""};
+  var key=siteData.portfolio?siteData.portfolio.length:0;
+  DB.ref("site/portfolio/"+key).set(item);
+  toast("Проект добавлен");
+}
+
+function deletePortfolioItem(idx){
+  if(!confirm("Удалить проект?"))return;
+  var items=siteData.portfolio.slice();
+  items.splice(idx,1);
+  DB.ref("site/portfolio").set(items);
+  toast("Удалено");
+}
+
+function renderContacts(){
+  if(!siteData.contacts)return;
+  var c=siteData.contacts;
+  document.getElementById("c_phone").value=c.phone||"";
+  document.getElementById("c_email").value=c.email||"";
+  document.getElementById("c_city").value=c.city||"";
+  document.getElementById("c_schedule").value=c.schedule||"";
+  document.getElementById("c_telegram").value=c.telegram||"";
+  document.getElementById("c_whatsapp").value=c.whatsapp||"";
+  document.getElementById("c_instagram").value=c.instagram||"";
+}
+
+function saveContacts(){
+  DB.ref("site/contacts").set({
+    phone:document.getElementById("c_phone").value,
+    email:document.getElementById("c_email").value,
+    city:document.getElementById("c_city").value,
+    schedule:document.getElementById("c_schedule").value,
+    telegram:document.getElementById("c_telegram").value,
+    whatsapp:document.getElementById("c_whatsapp").value,
+    instagram:document.getElementById("c_instagram").value
+  });
+  toast("Контакты сохранены");
+}
+
+var PAGE_LABELS={index:"Главная",about:"О нас",services:"Услуги",portfolio:"Портфолио",prices:"Цены",process:"Процесс",contact:"Контакты"};
+function renderTexts(){
+  var cont=document.getElementById("textsContainer");
+  if(!cont||!siteData.texts)return;
+  var texts=siteData.texts;
+  var html="";
+  for(var page in PAGE_LABELS){
+    if(!texts[page])continue;
+    html+='<div class="cms-card"><h3>'+PAGE_LABELS[page]+'</h3>';
+    var fields=texts[page];
+    for(var key in fields){
+      html+='<div class="cms-field"><label>'+key+'</label>';
+      var val=fields[key]||"";
+      if(val.length>80){
+        html+='<textarea id="txt_'+page+'_'+key+'" rows="2">'+escHtml(val)+'</textarea>';
+      }else{
+        html+='<input id="txt_'+page+'_'+key+'" value="'+escHtml(val)+'">';
+      }
+      html+='</div>';
+    }
+    html+='<div class="cms-actions"><button class="cms-btn cms-btn-primary" onclick="saveTexts(\''+page+'\')">Сохранить</button></div></div>';
+  }
+  cont.innerHTML=html;
+}
+
+function saveTexts(page){
+  var fields=siteData.texts[page];
+  var update={};
+  for(var key in fields){
+    var el=document.getElementById("txt_"+page+"_"+key);
+    if(el)update[key]=el.value;
+  }
+  DB.ref("site/texts/"+page).update(update);
+  toast("Тексты '"+PAGE_LABELS[page]+"' сохранены");
+}
+
+var PRICE_LABELS={architecture:"Архитектурные макеты",industrial:"Промышленные макеты",exhibition:"Выставочные и презентационные",extras:"Дополнительные опции"};
+function renderPrices(){
+  var cont=document.getElementById("pricesContainer");
+  if(!cont||!siteData.prices)return;
+  var prices=siteData.prices;
+  var html="";
+  for(var cat in PRICE_LABELS){
+    if(!prices[cat])continue;
+    html+='<div class="cms-card"><h3>'+PRICE_LABELS[cat]+'</h3>';
+    var items=prices[cat];
+    for(var i=0;i<items.length;i++){
+      var it=items[i];
+      html+='<div style="border:1px solid var(--border);border-radius:8px;padding:10px;margin-bottom:8px">';
+      for(var key in it){
+        html+='<div class="cms-field"><label>'+key+'</label><input id="pr_'+cat+'_'+i+'_'+key+'" value="'+escHtml(it[key]||"")+'"></div>';
+      }
+      html+='<button class="btn-icon btn-del" onclick="deletePriceItem(\''+cat+'\','+i+')" title="Удалить">&#10005;</button>';
+      html+='</div>';
+    }
+    html+='<div class="cms-actions"><button class="cms-btn cms-btn-secondary" onclick="addPriceItem(\''+cat+'\')">+ Добавить</button><button class="cms-btn cms-btn-primary" onclick="savePrices(\''+cat+'\')">Сохранить</button></div></div>';
+  }
+  cont.innerHTML=html;
+}
+
+function savePrices(cat){
+  var items=siteData.prices[cat];
+  var updated=[];
+  for(var i=0;i<items.length;i++){
+    var obj={};
+    for(var key in items[i]){
+      var el=document.getElementById("pr_"+cat+"_"+i+"_"+key);
+      if(el)obj[key]=el.value;
+    }
+    updated.push(obj);
+  }
+  DB.ref("site/prices/"+cat).set(updated);
+  toast("Цены '"+PRICE_LABELS[cat]+"' сохранены");
+}
+
+function addPriceItem(cat){
+  var items=siteData.prices[cat]||[];
+  var newItem=cat==="extras"?{name:"Новая позиция",desc:"",price:""}:{name:"Новая позиция",scale:"",size:"",time:"",price:""};
+  items.push(newItem);
+  DB.ref("site/prices/"+cat).set(items);
+}
+
+function deletePriceItem(cat,idx){
+  if(!confirm("Удалить позицию?"))return;
+  var items=siteData.prices[cat].slice();
+  items.splice(idx,1);
+  DB.ref("site/prices/"+cat).set(items);
+}
+
+function closeEditModal(){document.getElementById("editModal").style.display="none";}
+
+if(localStorage.getItem("admin_auth")==="1"){
+  var ls=document.getElementById("loginScreen");if(ls)ls.style.display="none";
+  var ap=document.getElementById("adminPanel");if(ap)ap.style.display="flex";
+  showUser();initFirebase();
+  if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",function(){loadAll();});}else{loadAll();}
+}
+applyTheme();
+(function(){var si=document.getElementById("usernameInput");var pi=document.getElementById("passwordInput");if(si)si.addEventListener("keydown",function(e){if(e.key==="Enter")login();});if(pi)pi.addEventListener("keydown",function(e){if(e.key==="Enter")login();});})();
+</script>
+</body>
+</html>

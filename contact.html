@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" data-cms-page="contact">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -47,17 +47,17 @@
 <main>
   <section class="section page-intro">
     <p class="eyebrow">Контакты</p>
-    <h1>Обсудим формат, сроки и бюджет вашего макета без лишней бюрократии.</h1>
-    <p class="lead">Свяжитесь с нами, чтобы обсудить задачу, формат макета, сроки производства и удобный вариант демонстрации проекта.</p>
+    <h1 data-cms="title">Обсудим формат, сроки и бюджет вашего макета без лишней бюрократии.</h1>
+    <p class="lead" data-cms="lead">Свяжитесь с нами, чтобы обсудить задачу, формат макета, сроки производства и удобный вариант демонстрации проекта.</p>
   </section>
 
   <section class="section contact-layout">
     <article class="card contact-card">
       <h2>Связаться</h2>
-      <p><strong>Телефон:</strong> +7 (900) 000-00-00</p>
-      <p><strong>Email:</strong> hello@mmstudio.ru</p>
-      <p><strong>Город:</strong> Ростов-на-Дону</p>
-      <p><strong>График:</strong> Пн-Пт, 10:00-19:00</p>
+      <p><strong>Телефон:</strong> <span data-cms-contact="phone">+7 (900) 000-00-00</span></p>
+      <p><strong>Email:</strong> <span data-cms-contact="email">hello@mmstudio.ru</span></p>
+      <p><strong>Город:</strong> <span data-cms-contact="city">Ростов-на-Дону</span></p>
+      <p><strong>График:</strong> <span data-cms-contact="schedule">Пн-Пт, 10:00-19:00</span></p>
     </article>
 
     <article class="card contact-card">
@@ -120,5 +120,8 @@
 </footer>
 
 <script src="script.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+<script src="site.js"></script>
 </body>
 </html>

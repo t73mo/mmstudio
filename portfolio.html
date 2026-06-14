@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" data-cms-page="portfolio">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -47,11 +47,11 @@
 <main>
   <section class="section page-intro">
     <p class="eyebrow">Портфолио</p>
-    <h1>Показываем не просто макеты, а задачи, которые они помогали продавать, объяснять и защищать.</h1>
-    <p class="lead">Здесь собраны примеры архитектурных, промышленных и выставочных макетов с акцентом на задачу, масштаб и подачу проекта.</p>
+    <h1 data-cms="title">Показываем не просто макеты, а задачи, которые они помогали продавать, объяснять и защищать.</h1>
+    <p class="lead" data-cms="lead">Здесь собраны примеры архитектурных, промышленных и выставочных макетов с акцентом на задачу, масштаб и подачу проекта.</p>
   </section>
 
-  <section class="section portfolio-stack">
+  <section class="section portfolio-stack" data-cms-portfolio>
     <article class="portfolio-card">
       <div class="portfolio-visual">
         <img class="portfolio-image" src="https://images.unsplash.com/photo-1511818966892-d7d671e672a2?auto=format&fit=crop&w=1200&q=80" alt="Презентационный архитектурный макет жилого квартала">
@@ -173,5 +173,8 @@
 </footer>
 
 <script src="script.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+<script src="site.js"></script>
 </body>
 </html>
