@@ -9,176 +9,135 @@ var MMChat = (function() {
     appId: "1:466384625481:web:fb4bb7144d0d329be8c498"
   };
 
-  var ADMIN_NAMES = {telman:"Тельман", anastasia:"Анастасия"};
+  var NAMES = {telman:"Тельман", anastasia:"Анастасия"};
   var db = null;
   var chatOpen = false;
   var presenceData = {};
 
   function getAdminId() {
     var u = localStorage.getItem("admin_user");
-    if (!u) return null;
-    return u.toLowerCase();
+    return u ? u.toLowerCase() : null;
   }
 
-  function escapeHtml(s) {
-    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  function esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
 
-  function formatTime(ts) {
+  function fmtTime(ts) {
     if (!ts) return '';
-    var d = new Date(ts);
-    return d.toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit'});
+    return new Date(ts).toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit'});
   }
 
   function init() {
-    if (!getAdminId()) return;
+    var id = getAdminId();
+    if (!id) return;
+
     if (typeof firebase === 'undefined') {
-      console.warn('Firebase SDK not loaded');
+      setTimeout(init, 500);
       return;
     }
+
     try {
-      var app = firebase.initializeApp(CFG);
+      if (!firebase.apps.length) {
+        firebase.initializeApp(CFG);
+      }
       db = firebase.database();
     } catch(e) {
-      console.warn('Firebase init failed:', e.message);
       return;
     }
-    buildChatUI();
-    setupPresence();
-    watchPresence();
-    watchMessages();
+
+    buildUI();
+
+    db.ref('.info/connected').on('value', function(snap) {
+      if (snap.val() === true) {
+        db.ref('presence/' + id).set({online: true, ts: Date.now()});
+        db.ref('presence/' + id).onDisconnect().set({online: false, ts: Date.now()});
+      }
+    });
+
+    db.ref('presence').on('value', function(snap) {
+      presenceData = snap.val() || {};
+      var el = document.getElementById('online-status');
+      if (!el) return;
+      var other = id === 'telman' ? 'anastasia' : 'telman';
+      var info = presenceData[other];
+      if (info && info.online) {
+        el.innerHTML = '<span class="online-dot"></span>' + NAMES[other] + ' в сети';
+      } else {
+        el.innerHTML = '<span class="offline-dot"></span>' + NAMES[other] + ' не в сети';
+      }
+    });
+
+    db.ref('messages').orderByChild('time').on('value', function(snap) {
+      var box = document.getElementById('chat-messages');
+      if (!box) return;
+      var msgs = [];
+      snap.forEach(function(ch) { msgs.push(ch.val()); });
+      box.innerHTML = msgs.map(function(m) {
+        var mine = m.user === id;
+        return '<div class="chat-msg ' + (mine ? 'chat-me' : 'chat-other') + '">' +
+          '<div class="chat-msg-name">' + esc(m.name) + '</div>' +
+          '<div class="chat-msg-text">' + esc(m.text) + '</div>' +
+          '<div class="chat-msg-time">' + fmtTime(m.time) + '</div></div>';
+      }).join('');
+      box.scrollTop = box.scrollHeight;
+    });
   }
 
-  function buildChatUI() {
+  function buildUI() {
+    if (document.getElementById('online-status')) return;
+
     var header = document.querySelector('.main-header');
     if (!header) return;
 
-    var onlineDot = document.createElement('div');
-    onlineDot.id = 'online-status';
-    onlineDot.style.cssText = 'display:flex;align-items:center;gap:6px;font-size:0.82rem;color:var(--muted);';
-    header.appendChild(onlineDot);
+    var dot = document.createElement('div');
+    dot.id = 'online-status';
+    dot.style.cssText = 'display:flex;align-items:center;gap:6px;font-size:0.82rem;color:var(--muted);';
+    header.appendChild(dot);
 
-    var chatBtn = document.createElement('button');
-    chatBtn.id = 'chat-toggle-btn';
-    chatBtn.innerHTML = '&#9993;';
-    chatBtn.title = 'Открыть чат';
-    chatBtn.onclick = function() { toggleChat(); };
-    header.appendChild(chatBtn);
+    var btn = document.createElement('button');
+    btn.id = 'chat-toggle-btn';
+    btn.innerHTML = '&#9993;';
+    btn.title = 'Чат';
+    btn.onclick = function() { toggleChat(); };
+    header.appendChild(btn);
 
-    var chatPanel = document.createElement('div');
-    chatPanel.id = 'chat-panel';
-    chatPanel.innerHTML =
-      '<div class="chat-header">' +
-        '<span class="chat-title">Чат</span>' +
-        '<button class="chat-close" onclick="MMChat.toggleChat()">&#10005;</button>' +
-      '</div>' +
+    var panel = document.createElement('div');
+    panel.id = 'chat-panel';
+    panel.innerHTML =
+      '<div class="chat-header"><span class="chat-title">Чат</span>' +
+      '<button class="chat-close" onclick="MMChat.toggleChat()">&#10005;</button></div>' +
       '<div class="chat-messages" id="chat-messages"></div>' +
       '<div class="chat-input-row">' +
-        '<input type="text" id="chat-input" placeholder="Сообщение..." maxlength="500" autocomplete="off"/>' +
-        '<button class="chat-send" id="chat-send-btn">&#10148;</button>' +
-      '</div>';
-    document.body.appendChild(chatPanel);
+      '<input type="text" id="chat-input" placeholder="Сообщение..." maxlength="500" autocomplete="off"/>' +
+      '<button class="chat-send" id="chat-send-btn">&#10148;</button></div>';
+    document.body.appendChild(panel);
 
     document.getElementById('chat-input').addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') {
-        var inp = document.getElementById('chat-input');
-        if (inp.value.trim()) {
-          sendMsg(inp.value);
-          inp.value = '';
-        }
+      if (e.key === 'Enter' && this.value.trim()) {
+        sendMsg(this.value); this.value = '';
       }
     });
     document.getElementById('chat-send-btn').addEventListener('click', function() {
       var inp = document.getElementById('chat-input');
-      if (inp.value.trim()) {
-        sendMsg(inp.value);
-        inp.value = '';
-      }
+      if (inp.value.trim()) { sendMsg(inp.value); inp.value = ''; }
     });
   }
 
   function toggleChat() {
     chatOpen = !chatOpen;
-    var panel = document.getElementById('chat-panel');
-    if (panel) panel.classList.toggle('open', chatOpen);
-    if (chatOpen) {
-      var msgs = document.getElementById('chat-messages');
-      if (msgs) msgs.scrollTop = msgs.scrollHeight;
-    }
-  }
-
-  function setupPresence() {
-    var id = getAdminId();
-    if (!id || !db) return;
-    var presRef = db.ref('presence/' + id);
-    var connectedRef = db.ref('.info/connected');
-    connectedRef.on('value', function(snap) {
-      if (snap.val() === true) {
-        presRef.set({online: true, lastSeen: Date.now()});
-        presRef.onDisconnect().set({online: false, lastSeen: Date.now()});
-      }
-    });
-  }
-
-  function watchPresence() {
-    if (!db) return;
-    db.ref('presence').on('value', function(snap) {
-      presenceData = snap.val() || {};
-      updateOnlineStatus();
-    });
-  }
-
-  function updateOnlineStatus() {
-    var el = document.getElementById('online-status');
-    if (!el) return;
-    var myId = getAdminId();
-    var otherId = myId === 'telman' ? 'anastasia' : 'telman';
-    var other = presenceData[otherId];
-    var isOnline = other && other.online;
-    el.innerHTML = isOnline
-      ? '<span class="online-dot"></span>' + ADMIN_NAMES[otherId] + ' в сети'
-      : '<span class="offline-dot"></span>' + ADMIN_NAMES[otherId] + ' не в сети';
+    var p = document.getElementById('chat-panel');
+    if (p) p.classList.toggle('open', chatOpen);
   }
 
   function sendMsg(text) {
     var id = getAdminId();
-    if (!id || !db || !text.trim()) return;
-    db.ref('messages').push({
-      user: id,
-      name: ADMIN_NAMES[id] || id,
-      text: text.trim(),
-      time: Date.now()
-    });
+    if (!id || !db) return;
+    db.ref('messages').push({user: id, name: NAMES[id] || id, text: text.trim(), time: Date.now()});
   }
 
-  function watchMessages() {
-    if (!db) return;
-    db.ref('messages').orderByChild('time').on('value', function(snap) {
-      var container = document.getElementById('chat-messages');
-      if (!container) return;
-      var myId = getAdminId();
-      var msgs = [];
-      snap.forEach(function(child) { msgs.push(child.val()); });
-      container.innerHTML = msgs.map(function(m) {
-        var isMe = m.user === myId;
-        return '<div class="chat-msg ' + (isMe ? 'chat-me' : 'chat-other') + '">' +
-          '<div class="chat-msg-name">' + escapeHtml(m.name || '') + '</div>' +
-          '<div class="chat-msg-text">' + escapeHtml(m.text || '') + '</div>' +
-          '<div class="chat-msg-time">' + formatTime(m.time) + '</div>' +
-        '</div>';
-      }).join('');
-      container.scrollTop = container.scrollHeight;
-    });
-  }
-
-  return {
-    init: init,
-    toggleChat: toggleChat
-  };
+  return { init: init, toggleChat: toggleChat };
 })();
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', MMChat.init);
-} else {
-  MMChat.init();
-}
+document.addEventListener('DOMContentLoaded', MMChat.init);
+if (document.readyState !== 'loading') MMChat.init();
