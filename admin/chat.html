@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover,interactive-widget=resizes-content">
 <title>Чат | MM Studio</title>
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -188,15 +188,25 @@ function loadMessages(){
     }
     container.innerHTML=html;
     container.scrollTop=container.scrollHeight;
-    checkNotifications(msgs);
-    if(document.hasFocus()) markRead();
+    var lastTime=msgs[msgs.length-1].time;
+    if(!document.hidden){
+      lastMsgTime=lastTime;
+      localStorage.setItem("chat_lastSeen",lastMsgTime);
+      markRead();
+    }else if(lastTime>lastMsgTime){
+      unreadCount++;
+      document.title="("+unreadCount+") Чат | MM Studio";
+      if(Notification.permission==="granted"){
+        new Notification(NAMES[myId==="telman"?"anastasia":"telman"],{body:msgs[msgs.length-1].text||"Фото",icon:"../assets/favicon.svg"});
+      }
+      lastMsgTime=lastTime;
+      localStorage.setItem("chat_lastSeen",lastMsgTime);
+    }
   });
 }
 
 function markRead(){
   if(!myId||!db)return;
-  lastMsgTime=Date.now();
-  localStorage.setItem("chat_lastSeen",lastMsgTime);
   db.ref("messages").once("value",function(snap){
     var updates={};
     snap.forEach(function(ch){
@@ -207,26 +217,10 @@ function markRead(){
   });
 }
 
-function checkNotifications(msgs){
-  if(!document.hidden||!msgs.length)return;
-  var last=msgs[msgs.length-1];
-  if(last.user!==myId&&last.time>lastMsgTime){
-    unreadCount++;
-    document.title="("+unreadCount+") Чат | MM Studio";
-    if(Notification.permission==="granted"){
-      new Notification(NAMES[last.user]||last.user,{body:last.text||"Фото",icon:"../assets/favicon.svg"});
-    }
-  }
-  if(msgs.length){
-    lastMsgTime=msgs[msgs.length-1].time;
-    localStorage.setItem("chat_lastSeen",lastMsgTime);
-  }
-}
-
 document.addEventListener("visibilitychange",function(){
-  if(!document.hidden){unreadCount=0;document.title="Чат | MM Studio";markRead();}
+  if(!document.hidden){unreadCount=0;document.title="Чат | MM Studio";}
 });
-window.addEventListener("focus",function(){unreadCount=0;document.title="Чат | MM Studio";markRead();});
+window.addEventListener("focus",function(){unreadCount=0;document.title="Чат | MM Studio";});
 
 function onMsgContext(e,msgId,userId){
   e.preventDefault();
@@ -319,6 +313,14 @@ if(localStorage.getItem("admin_auth")==="1"){
   myName=NAMES[myId]||localStorage.getItem("admin_user")||"";
   if(myId) initChat();
 }
+
+if(window.visualViewport){
+  window.visualViewport.addEventListener("resize",function(){
+    var c=document.getElementById("chatMessages");
+    if(c) setTimeout(function(){c.scrollTop=c.scrollHeight;},100);
+  });
+}
+
 (function(){var si=document.getElementById("usernameInput");var pi=document.getElementById("passwordInput");if(si)si.addEventListener("keydown",function(e){if(e.key==="Enter")doLogin();});if(pi)pi.addEventListener("keydown",function(e){if(e.key==="Enter")doLogin();});})();
 </script>
 </body>
