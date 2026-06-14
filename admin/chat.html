@@ -138,7 +138,8 @@ function doLogin(){
 }
 
 function initChat(){
-  try{if(!firebase.apps.length)firebase.initializeApp(CFG);db=firebase.database();messaging=firebase.messaging();}catch(e){return;}
+  try{if(!firebase.apps.length)firebase.initializeApp(CFG);db=firebase.database();}catch(e){return;}
+  try{messaging=firebase.messaging();}catch(e){messaging=null;}
   setupPresence();
   loadMessages();
   setupInput();
