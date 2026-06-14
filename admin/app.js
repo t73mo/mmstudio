@@ -9,9 +9,11 @@ function login(){
     document.getElementById("loginScreen").style.display="none";
     document.getElementById("adminPanel").style.display="flex";
     localStorage.setItem("admin_auth","1");localStorage.setItem("admin_user",u);
+    showUser();
   }else document.getElementById("loginError").style.display="block";
 }
 function logout(){localStorage.removeItem("admin_auth");localStorage.removeItem("admin_user");window.location.href="index.html";}
+function showUser(){var u=localStorage.getItem("admin_user");document.querySelectorAll(".user-name").forEach(function(e){if(u)e.textContent=u;});}
 function toggleAcc(el){el.parentElement.classList.toggle("open");}
 function toggleItem(el){el.parentElement.classList.toggle("open");}
 function copyText(el){
@@ -169,5 +171,6 @@ document.addEventListener("click",function(e){
 if(localStorage.getItem("admin_auth")==="1"){
   var ls=document.getElementById("loginScreen");if(ls)ls.style.display="none";
   var ap=document.getElementById("adminPanel");if(ap)ap.style.display="flex";
+  showUser();
 }
 (function(){var si=document.getElementById("usernameInput");var pi=document.getElementById("passwordInput");if(si)si.addEventListener("keydown",function(e){if(e.key==="Enter")login();});if(pi)pi.addEventListener("keydown",function(e){if(e.key==="Enter")login();});})();
