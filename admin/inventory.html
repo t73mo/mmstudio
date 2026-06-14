@@ -20,6 +20,17 @@ if(localStorage.getItem("mm_theme")==="dark"||(c&&!localStorage.getItem("mm_them
 if(c)document.documentElement.className=c;
 </script>
 <style>.auth-ok #loginScreen{display:none!important}.auth-ok #adminPanel{display:flex!important}</style>
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<script>
+  window.OneSignalDeferred = window.OneSignalDeferred || [];
+  OneSignalDeferred.push(async function(OneSignal) {
+    await OneSignal.init({
+      appId: "129d5025-2692-4131-9e21-c61cca2da994",
+      notifyButton: { enable: false },
+      allowLocalhostAsHttps: true
+    });
+  });
+</script>
 </head><body>
 <div class="login-screen" id="loginScreen">
 <div class="login-box"><h1>MM Studio</h1><p>Админ-панель</p>
