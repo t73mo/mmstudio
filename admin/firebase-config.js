@@ -2,13 +2,13 @@ import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.0/firebase
 import {getDatabase, ref, onValue, set, push, onDisconnect, serverTimestamp, update} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const CFG = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
-  projectId: "YOUR_PROJECT",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyD3XHJ3xdeJC_ALeIK4nOf1EASO39W3Gh0",
+  authDomain: "mmstudio-86917.firebaseapp.com",
+  databaseURL: "https://mmstudio-86917-default-rtdb.firebaseio.com",
+  projectId: "mmstudio-86917",
+  storageBucket: "mmstudio-86917.firebasestorage.app",
+  messagingSenderId: "466384625481",
+  appId: "1:466384625481:web:fb4bb7144d0d329be8c498"
 };
 
 let app, db;
