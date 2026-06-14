@@ -11,7 +11,6 @@ var MMChat = (function() {
   var NAMES = {telman:"Тельман", anastasia:"Анастасия"};
   var db = null;
   var chatOpen = false;
-  var unreadCount = 0;
   var myId = null;
 
   function getAdminId() {
@@ -37,6 +36,7 @@ var MMChat = (function() {
     } catch(e) { return; }
     buildUI();
     setupPresence();
+    watchBadge();
     watchMessages();
   }
 
@@ -52,6 +52,17 @@ var MMChat = (function() {
       var v = snap.val();
       var dot = document.getElementById('chat-online-dot');
       if (dot) dot.className = 'chat-online-dot ' + (v && v.online ? 'online' : 'offline');
+    });
+  }
+
+  function watchBadge() {
+    db.ref('messages').orderByChild('time').on('value', function(snap) {
+      var hasUnread = false;
+      snap.forEach(function(ch) {
+        var m = ch.val();
+        if (m.user !== myId && !m.read) hasUnread = true;
+      });
+      updateBadge(hasUnread);
     });
   }
 
@@ -94,15 +105,6 @@ var MMChat = (function() {
       }
       box.innerHTML = html;
       box.scrollTop = box.scrollHeight;
-
-      if (!chatOpen) {
-        var hasUnread = false;
-        for (var i = msgs.length - 1; i >= 0; i--) {
-          if (msgs[i].user !== myId && !msgs[i].read) { hasUnread = true; break; }
-        }
-        unreadCount = hasUnread ? 1 : 0;
-        updateBadge();
-      }
     });
   }
 
@@ -114,29 +116,18 @@ var MMChat = (function() {
         var m = ch.val();
         if (m.user !== myId && !m.read) updates[ch.key + '/read'] = true;
       });
-      if (Object.keys(updates).length) {
-        db.ref('messages').update(updates);
-      }
-      if (!chatOpen) {
-        var hasUnread = false;
-        snap.forEach(function(ch) {
-          var m = ch.val();
-          if (m.user !== myId && !updates[ch.key] && !m.read) hasUnread = true;
-        });
-        unreadCount = hasUnread ? 1 : 0;
-        updateBadge();
-      }
+      if (Object.keys(updates).length) db.ref('messages').update(updates);
     });
   }
 
-  function updateBadge() {
+  function updateBadge(hasUnread) {
     var badge = document.getElementById('chatBadge');
     if (badge) {
-      if (unreadCount > 0) { badge.textContent = unreadCount; badge.classList.add('show'); }
+      if (hasUnread && !chatOpen) { badge.textContent = '!'; badge.classList.add('show'); }
       else { badge.textContent = ''; badge.classList.remove('show'); }
     }
-    if (unreadCount > 0) document.title = '(' + unreadCount + ') ' + document.title.replace(/^\(\d+\)\s*/, '');
-    else document.title = document.title.replace(/^\(\d+\)\s*/, '');
+    if (hasUnread && !chatOpen) document.title = document.title.replace(/^\(\d+\)\s*/, '').replace(/^! /, '');
+    else document.title = document.title.replace(/^\(\d+\)\s*/, '').replace(/^! /, '');
   }
 
   function buildUI() {
@@ -182,8 +173,6 @@ var MMChat = (function() {
     var p = document.getElementById('chat-popup');
     if (p) p.classList.toggle('open', chatOpen);
     if (chatOpen) {
-      unreadCount = 0;
-      updateBadge();
       markRead();
       document.getElementById('chatPopupInput').focus();
     }
