@@ -24,7 +24,11 @@ function copyText(el){
 function toast(t){var d=document.getElementById("toast");d.textContent="\u0421\u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u043d\u043e: "+t;d.style.opacity="1";setTimeout(function(){d.style.opacity="0";},1500);}
 function expandAll(){document.querySelectorAll(".acc-group").forEach(function(g){g.classList.add("open");});}
 function collapseAll(){document.querySelectorAll(".acc-group, .acc-item").forEach(function(e){e.classList.remove("open");});}
-function toggleSidebar(){document.getElementById("sidebar").classList.toggle("open");}
+function toggleSidebar(){document.getElementById("sidebar").classList.toggle("open");var o=document.getElementById("sidebarOverlay");if(o)o.classList.toggle("open");}
+function closeSidebar(){document.getElementById("sidebar").classList.remove("open");var o=document.getElementById("sidebarOverlay");if(o)o.classList.remove("open");}
+function toggleTheme(){document.documentElement.classList.toggle("dark");var isDark=document.documentElement.classList.contains("dark");localStorage.setItem("mm_theme",isDark?"dark":"light");updateThemeIcon();}
+function updateThemeIcon(){var isDark=document.documentElement.classList.contains("dark");var ic=document.getElementById("themeIcon");var lb=document.getElementById("themeLabel");if(ic)ic.textContent=isDark?"light_mode":"dark_mode";if(lb)lb.textContent=isDark?"Светлая тема":"Тёмная тема";}
+function applyTheme(){var t=localStorage.getItem("mm_theme");if(t==="dark"){document.documentElement.classList.add("dark");}else if(!t&&window.matchMedia&&window.matchMedia("(prefers-color-scheme:dark)").matches){document.documentElement.classList.add("dark");}updateThemeIcon();}
 function escHtml(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
 
 function getUrlParam(name){
@@ -173,4 +177,5 @@ if(localStorage.getItem("admin_auth")==="1"){
   var ap=document.getElementById("adminPanel");if(ap)ap.style.display="flex";
   showUser();
 }
+applyTheme();
 (function(){var si=document.getElementById("usernameInput");var pi=document.getElementById("passwordInput");if(si)si.addEventListener("keydown",function(e){if(e.key==="Enter")login();});if(pi)pi.addEventListener("keydown",function(e){if(e.key==="Enter")login();});})();
