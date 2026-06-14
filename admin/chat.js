@@ -51,12 +51,14 @@ var MMChat = (function() {
       await OneSignal.login(myId);
       setTimeout(async function() {
         try {
-          var sub = OneSignal.User.PushSubscription;
-          if (sub && !sub.isPushEnabled) {
-            await sub.optIn();
+          var isSub = OneSignal.User.PushSubscription.isPushEnabled;
+          if (!isSub && Notification.permission === 'default') {
+            await OneSignal.Slidedown.promptNative();
+          } else if (!isSub) {
+            await OneSignal.User.PushSubscription.optIn();
           }
-        } catch(e) {}
-      }, 2000);
+        } catch(e) { console.error('OS sub error:', e); }
+      }, 3000);
     });
   }
 
