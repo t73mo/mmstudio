@@ -31,6 +31,8 @@ html.dark{--bg:#111;--surface:#1a1a1a;--text:#e8e8e8;--text2:#aaa;--muted:#777;-
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
 .main-header{padding:10px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;background:var(--surface);flex-shrink:0}
 .burger{display:none;background:none;border:none;font-size:1.3rem;cursor:pointer;padding:8px;color:var(--text);-webkit-tap-highlight-color:transparent;line-height:1}
+.back-btn{background:none;border:none;font-size:1.2rem;cursor:pointer;padding:8px;color:var(--text);-webkit-tap-highlight-color:transparent;line-height:1;border-radius:6px}
+.back-btn:active{background:var(--hover)}
 .main-title{font-family:"Unbounded",sans-serif;font-size:0.88rem;flex:1;min-width:0}
 .main-content{flex:1;overflow-y:auto;padding:16px;-webkit-overflow-scrolling:touch}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px}
