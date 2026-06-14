@@ -26,27 +26,28 @@ if(c)document.documentElement.className=c;
 .login-box button:hover{opacity:.85}
 .login-error{color:#c00;font-size:0.8rem;margin-top:6px;display:none}
 #chatApp{display:none;height:100vh;flex-direction:column;background:var(--bg)}
-.chat-topbar{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0}
+.chat-topbar{display:flex;align-items:center;gap:8px;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0}
 .chat-topbar .back-btn{background:none;border:none;font-size:1.2rem;cursor:pointer;padding:8px;color:var(--text);border-radius:6px}
 .chat-topbar .back-btn:active{background:var(--hover)}
-.chat-topbar-title{flex:1;font-family:"Unbounded",sans-serif;font-size:0.88rem}
-.chat-topbar-status{display:flex;align-items:center;gap:6px;font-size:0.78rem;color:var(--muted)}
-.online-dot,.offline-dot{display:inline-block;width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.online-dot{background:#4caf50;box-shadow:0 0 6px rgba(76,175,80,.5)}
-.offline-dot{background:#888}
-.chat-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:8px;-webkit-overflow-scrolling:touch}
-.chat-date-divider{text-align:center;font-size:0.68rem;color:var(--muted);padding:8px 0;position:relative}
-.chat-date-divider::before,.chat-date-divider::after{content:"";position:absolute;top:50%;width:calc(50% - 40px);height:1px;background:var(--border)}
-.chat-date-divider::before{left:0}
-.chat-date-divider::after{right:0}
-.chat-msg{max-width:75%;padding:10px 14px;border-radius:14px;font-size:0.84rem;line-height:1.45;position:relative;word-break:break-word}
-.chat-me{align-self:flex-end;background:var(--text);color:var(--bg);border-bottom-right-radius:4px}
-.chat-other{align-self:flex-start;background:var(--surface);border:1px solid var(--border);border-bottom-left-radius:4px}
-.chat-msg-name{font-size:0.65rem;font-weight:700;margin-bottom:3px;opacity:.65}
-.chat-msg-img{max-width:260px;max-height:260px;border-radius:8px;margin:6px 0;cursor:pointer;display:block}
+.chat-topbar-title{flex:1;font-family:"Unbounded",sans-serif;font-size:0.85rem}
+.chat-topbar-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.chat-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:6px;-webkit-overflow-scrolling:touch}
+.chat-date-sep{text-align:center;font-size:0.68rem;color:var(--muted);padding:8px 0;position:relative}
+.chat-date-sep::before,.chat-date-sep::after{content:"";position:absolute;top:50%;width:calc(50% - 35px);height:1px;background:var(--border)}
+.chat-date-sep::before{left:0}
+.chat-date-sep::after{right:0}
+.chat-msg{max-width:75%;padding:8px 12px;border-radius:12px;font-size:0.84rem;line-height:1.4;position:relative;word-break:break-word;cursor:default}
+.chat-me{align-self:flex-end;background:var(--text);color:var(--bg);border-bottom-right-radius:3px}
+.chat-other{align-self:flex-start;background:var(--surface);border:1px solid var(--border);border-bottom-left-radius:3px}
+.chat-msg-name{font-size:0.62rem;font-weight:700;margin-bottom:2px;opacity:.6}
+.chat-msg-img{max-width:260px;max-height:260px;border-radius:8px;margin:4px 0;cursor:pointer;display:block}
 .chat-msg-img:hover{opacity:.9}
 .chat-msg-text{white-space:pre-wrap}
-.chat-msg-time{font-size:0.6rem;opacity:.45;margin-top:4px;text-align:right}
+.chat-msg-footer{display:flex;align-items:center;justify-content:flex-end;gap:5px;margin-top:3px}
+.chat-msg-time{font-size:0.58rem;opacity:.45}
+.msg-check{font-size:0.62rem;line-height:1;opacity:.45}
+.msg-check.msg-read{opacity:.75}
+.msg-edited{font-size:0.56rem;opacity:.45;font-style:italic}
 .chat-input-bar{display:flex;align-items:flex-end;gap:8px;padding:10px 16px;border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;padding-bottom:max(10px,env(safe-area-inset-bottom))}
 .chat-attach{background:none;border:none;font-size:1.3rem;cursor:pointer;padding:8px;color:var(--muted);border-radius:8px;flex-shrink:0;line-height:1}
 .chat-attach:active{background:var(--hover)}
@@ -60,11 +61,14 @@ if(c)document.documentElement.className=c;
 .chat-preview-remove{position:absolute;top:4px;right:4px;background:rgba(0,0,0,.6);color:#fff;border:none;border-radius:50%;width:22px;height:22px;cursor:pointer;font-size:0.7rem;display:flex;align-items:center;justify-content:center}
 .chat-empty{text-align:center;color:var(--muted);font-size:0.85rem;padding:40px 20px}
 #chatFileInput{display:none}
-.notif-badge{position:absolute;top:-4px;right:-4px;background:#c00;color:#fff;font-size:0.6rem;font-weight:700;min-width:16px;height:16px;border-radius:8px;display:none;align-items:center;justify-content:center;padding:0 4px}
-.notif-badge.show{display:flex}
+.edit-bar{display:flex;align-items:center;gap:6px;padding:6px 16px;background:var(--hover);border-top:1px solid var(--border);font-size:0.78rem;color:var(--text)}
+.edit-bar span{flex:1;color:var(--muted)}
+.edit-bar button{background:none;border:none;cursor:pointer;font-size:0.85rem;padding:4px 8px;color:var(--muted);border-radius:4px}
+.edit-bar button:active{background:var(--border)}
+.edit-bar .edit-cancel{color:#c00}
 @media(min-width:769px){
-  .chat-messages{padding:24px 32px}
-  .chat-input-bar{padding:12px 32px}
+  .chat-messages{padding:24px 32px;max-width:800px;margin:0 auto;width:100%}
+  .chat-input-bar{padding:12px 32px;max-width:800px;margin:0 auto;width:100%}
   .chat-msg{max-width:55%}
 }
 </style>
@@ -81,9 +85,13 @@ if(c)document.documentElement.className=c;
   <div class="chat-topbar">
     <button class="back-btn" onclick="window.location.href='index.html'" title="Назад">&#8592;</button>
     <div class="chat-topbar-title">Чат</div>
-    <div class="chat-topbar-status" id="chatStatus"><span class="offline-dot"></span>загрузка...</div>
+    <div class="chat-topbar-dot" id="chatDot"></div>
   </div>
   <div class="chat-messages" id="chatMessages"><div class="chat-empty">Загрузка...</div></div>
+  <div class="edit-bar" id="editBar" style="display:none">
+    <span>Редактирование</span>
+    <button class="edit-cancel" onclick="cancelEdit()">&#10005;</button>
+  </div>
   <div class="chat-input-bar">
     <label class="chat-attach" title="Прикрепить фото">&#128247;<input type="file" id="chatFileInput" accept="image/*"></label>
     <div class="chat-input-wrap">
@@ -99,7 +107,7 @@ if(c)document.documentElement.className=c;
 var USERS={"Telman":"Kn0pKa78","Anastasia":"mm2026"};
 var NAMES={telman:"Тельман",anastasia:"Анастасия"};
 var CFG={apiKey:"AIzaSyD3XHJ3xdeJC_ALeIK4nOf1EASO39W3Gh0",authDomain:"mmstudio-86917.firebaseapp.com",databaseURL:"https://mmstudio-86917-default-rtdb.europe-west1.firebasedatabase.app",projectId:"mmstudio-86917",storageBucket:"mmstudio-86917.firebasestorage.app",messagingSenderId:"466384625481",appId:"1:466384625481:web:fb4bb7144d0d329be8c498"};
-var db,myId,myName,previewData=null,lastMsgTime=0,unreadCount=0,notifiedMsgs={};
+var db,myId,myName,previewData=null,lastMsgTime=0,unreadCount=0,editingMsgId=null;
 
 function doLogin(){
   var u=document.getElementById("usernameInput").value;
@@ -122,22 +130,17 @@ function initChat(){
 }
 
 function setupPresence(){
-  var presRef=db.ref("presence/"+myId);
   db.ref(".info/connected").on("value",function(snap){
     if(snap.val()===true){
-      presRef.set({online:true,ts:Date.now()});
-      presRef.onDisconnect().set({online:false,ts:Date.now()});
+      db.ref("presence/"+myId).set({online:true,ts:Date.now()});
+      db.ref("presence/"+myId).onDisconnect().set({online:false,ts:Date.now()});
     }
   });
   var otherId=myId==="telman"?"anastasia":"telman";
   db.ref("presence/"+otherId).on("value",function(snap){
     var v=snap.val();
-    var el=document.getElementById("chatStatus");
-    if(v&&v.online){
-      el.innerHTML='<span class="online-dot"></span>'+NAMES[otherId]+' в сети';
-    }else{
-      el.innerHTML='<span class="offline-dot"></span>'+NAMES[otherId]+' не в сети';
-    }
+    var dot=document.getElementById("chatDot");
+    dot.className="chat-topbar-dot "+(v&&v.online?"online-dot":"offline-dot");
   });
 }
 
@@ -146,8 +149,8 @@ function loadMessages(){
     var container=document.getElementById("chatMessages");
     var msgs=[];
     snap.forEach(function(ch){msgs.push(Object.assign({id:ch.key},ch.val()));});
-    if(msgs.length===0){
-      container.innerHTML='<div class="chat-empty">Нет сообщений.<br>Начните переписку!</div>';
+    if(!msgs.length){
+      container.innerHTML='<div class="chat-empty">Нет сообщений</div>';
       return;
     }
     var html="";
@@ -157,24 +160,42 @@ function loadMessages(){
       var d=new Date(m.time);
       var dateStr=d.toLocaleDateString("ru-RU",{day:"numeric",month:"long",year:"numeric"});
       if(dateStr!==lastDate){
-        html+='<div class="chat-date-divider">'+dateStr+'</div>';
+        html+='<div class="chat-date-sep">'+dateStr+'</div>';
         lastDate=dateStr;
       }
       var isMe=m.user===myId;
       var cls=isMe?"chat-msg chat-me":"chat-msg chat-other";
-      var imgHtml="";
-      if(m.image){
-        imgHtml='<img class="chat-msg-img" src="'+esc(m.image)+'" onclick="window.open(this.src)" loading="lazy">';
+      var editedTag=m.edited?' <span class="msg-edited">(ред.)</span>':"";
+      var checkHtml="";
+      if(isMe){
+        checkHtml=m.read?'<span class="msg-check msg-read">&#10003;&#10003;</span>':'<span class="msg-check">&#10003;</span>';
       }
-      html+='<div class="'+cls+'">';
-      if(!isMe)html+='<div class="chat-msg-name">'+esc(m.name)+'</div>';
-      if(imgHtml)html+=imgHtml;
-      if(m.text)html+='<div class="chat-msg-text">'+esc(m.text)+'</div>';
-      html+='<div class="chat-msg-time">'+fmtTime(m.time)+'</div></div>';
+      var imgHtml="";
+      if(m.image) imgHtml='<img class="chat-msg-img" src="'+esc(m.image)+'" onclick="window.open(this.src)" loading="lazy">';
+      html+='<div class="'+cls+'" data-msg-id="'+m.id+'" data-user="'+m.user+'" oncontextmenu="onMsgContext(event,\''+m.id+'\',\''+m.user+'\')">';
+      if(!isMe) html+='<div class="chat-msg-name">'+esc(m.name)+'</div>';
+      if(imgHtml) html+=imgHtml;
+      html+='<div class="chat-msg-body">';
+      if(m.text) html+='<div class="chat-msg-text">'+esc(m.text)+editedTag+'</div>';
+      html+='<div class="chat-msg-footer"><span class="chat-msg-time">'+fmtTime(m.time)+'</span>'+checkHtml+'</div>';
+      html+='</div></div>';
     }
     container.innerHTML=html;
     container.scrollTop=container.scrollHeight;
     checkNotifications(msgs);
+    if(document.hasFocus()) markRead();
+  });
+}
+
+function markRead(){
+  if(!myId||!db)return;
+  db.ref("messages").orderByChild("time").once("value",function(snap){
+    var updates={};
+    snap.forEach(function(ch){
+      var m=ch.val();
+      if(m.user!==myId&&!m.read) updates[ch.key+"/read"]=true;
+    });
+    if(Object.keys(updates).length) db.ref("messages").update(updates);
   });
 }
 
@@ -183,20 +204,38 @@ function checkNotifications(msgs){
   var last=msgs[msgs.length-1];
   if(last.user!==myId&&last.time>lastMsgTime){
     unreadCount++;
-    document.title="("+(unreadCount)+") Чат | MM Studio";
+    document.title="("+unreadCount+") Чат | MM Studio";
     if(Notification.permission==="granted"){
       new Notification(NAMES[last.user]||last.user,{body:last.text||"Фото",icon:"../assets/favicon.svg"});
     }
   }
-  if(msgs.length)lastMsgTime=msgs[msgs.length-1].time;
+  if(msgs.length) lastMsgTime=msgs[msgs.length-1].time;
 }
 
 document.addEventListener("visibilitychange",function(){
-  if(!document.hidden){
-    unreadCount=0;
-    document.title="Чат | MM Studio";
-  }
+  if(!document.hidden){unreadCount=0;document.title="Чат | MM Studio";markRead();}
 });
+
+function onMsgContext(e,msgId,userId){
+  e.preventDefault();
+  if(userId===myId) startEdit(msgId);
+}
+
+function startEdit(msgId){
+  db.ref("messages/"+msgId).once("value",function(snap){
+    var m=snap.val();if(!m)return;
+    editingMsgId=msgId;
+    document.getElementById("chatInput").value=m.text||"";
+    document.getElementById("editBar").style.display="flex";
+    document.getElementById("chatInput").focus();
+  });
+}
+
+function cancelEdit(){
+  editingMsgId=null;
+  document.getElementById("chatInput").value="";
+  document.getElementById("editBar").style.display="none";
+}
 
 function setupInput(){
   var inp=document.getElementById("chatInput");
@@ -208,35 +247,32 @@ function setupInput(){
   });
   inp.addEventListener("keydown",function(e){
     if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMsg();}
+    if(e.key==="Escape") cancelEdit();
   });
   btn.addEventListener("click",sendMsg);
   document.getElementById("chatFileInput").addEventListener("change",handleFile);
 }
 
 function handleFile(e){
-  var file=e.target.files[0];
-  if(!file)return;
+  var file=e.target.files[0];if(!file)return;
   if(file.size>500000){alert("Файл слишком большой (макс 500КБ)");return;}
   var reader=new FileReader();
   reader.onload=function(ev){
     previewData=ev.target.result;
     var wrap=document.querySelector(".chat-input-wrap");
-    var existing=wrap.querySelector(".chat-preview");
-    if(existing)existing.remove();
+    var existing=wrap.querySelector(".chat-preview");if(existing)existing.remove();
     var div=document.createElement("div");
     div.className="chat-preview";
     div.innerHTML='<img src="'+previewData+'"><button class="chat-preview-remove" onclick="removePreview()">&#10005;</button>';
     wrap.insertBefore(div,wrap.firstChild);
     document.getElementById("chatSendBtn").disabled=false;
   };
-  reader.readAsDataURL(file);
-  e.target.value="";
+  reader.readAsDataURL(file);e.target.value="";
 }
 
 function removePreview(){
   previewData=null;
-  var p=document.querySelector(".chat-preview");
-  if(p)p.remove();
+  var p=document.querySelector(".chat-preview");if(p)p.remove();
   document.getElementById("chatSendBtn").disabled=!document.getElementById("chatInput").value.trim();
 }
 
@@ -244,9 +280,15 @@ function sendMsg(){
   var inp=document.getElementById("chatInput");
   var text=inp.value.trim();
   if(!text&&!previewData)return;
-  var msg={user:myId,name:myName,text:text,time:Date.now()};
-  if(previewData){msg.image=previewData;}
-  db.ref("messages").push(msg);
+  if(editingMsgId){
+    db.ref("messages/"+editingMsgId).update({text:text,edited:true});
+    editingMsgId=null;
+    document.getElementById("editBar").style.display="none";
+  }else{
+    var msg={user:myId,name:myName,text:text,time:Date.now(),read:false};
+    if(previewData) msg.image=previewData;
+    db.ref("messages").push(msg);
+  }
   inp.value="";inp.style.height="auto";
   removePreview();
   document.getElementById("chatSendBtn").disabled=true;
@@ -256,10 +298,7 @@ function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").repl
 function fmtTime(ts){return new Date(ts).toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"});}
 
 if(Notification&&Notification.permission==="default"){
-  document.addEventListener("click",function reqNotif(){
-    Notification.requestPermission();
-    document.removeEventListener("click",reqNotif);
-  },{once:true});
+  document.addEventListener("click",function(){Notification.requestPermission();},{once:true});
 }
 
 if(localStorage.getItem("admin_auth")==="1"){
@@ -267,7 +306,7 @@ if(localStorage.getItem("admin_auth")==="1"){
   var ca=document.getElementById("chatApp");if(ca)ca.style.display="flex";
   myId=(localStorage.getItem("admin_user")||"").toLowerCase();
   myName=NAMES[myId]||localStorage.getItem("admin_user")||"";
-  if(myId)initChat();
+  if(myId) initChat();
 }
 (function(){var si=document.getElementById("usernameInput");var pi=document.getElementById("passwordInput");if(si)si.addEventListener("keydown",function(e){if(e.key==="Enter")doLogin();});if(pi)pi.addEventListener("keydown",function(e){if(e.key==="Enter")doLogin();});})();
 </script>
