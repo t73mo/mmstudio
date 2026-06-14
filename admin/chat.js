@@ -12,8 +12,6 @@ var MMChat = (function() {
   var db = null;
   var chatOpen = false;
   var unreadCount = 0;
-  var lastSeenTime = parseInt(localStorage.getItem('chat_lastSeen') || '0');
-  var watchInited = false;
   var myId = null;
 
   function getAdminId() {
@@ -97,23 +95,13 @@ var MMChat = (function() {
       box.innerHTML = html;
       box.scrollTop = box.scrollHeight;
 
-      var lastTime = msgs[msgs.length - 1].time;
-      if (!watchInited) {
-        lastSeenTime = lastTime;
-        localStorage.setItem('chat_lastSeen', lastSeenTime);
-        watchInited = true;
-        markRead();
-      } else if (lastTime > lastSeenTime) {
-        if (!chatOpen) {
-          var last = msgs[msgs.length - 1];
-          if (last && last.user !== myId) {
-            unreadCount++;
-            updateBadge();
-          }
+      if (!chatOpen) {
+        var hasUnread = false;
+        for (var i = msgs.length - 1; i >= 0; i--) {
+          if (msgs[i].user !== myId && !msgs[i].read) { hasUnread = true; break; }
         }
-        lastSeenTime = lastTime;
-        localStorage.setItem('chat_lastSeen', lastSeenTime);
-        markRead();
+        unreadCount = hasUnread ? 1 : 0;
+        updateBadge();
       }
     });
   }
@@ -126,7 +114,18 @@ var MMChat = (function() {
         var m = ch.val();
         if (m.user !== myId && !m.read) updates[ch.key + '/read'] = true;
       });
-      if (Object.keys(updates).length) db.ref('messages').update(updates);
+      if (Object.keys(updates).length) {
+        db.ref('messages').update(updates);
+      }
+      if (!chatOpen) {
+        var hasUnread = false;
+        snap.forEach(function(ch) {
+          var m = ch.val();
+          if (m.user !== myId && !updates[ch.key] && !m.read) hasUnread = true;
+        });
+        unreadCount = hasUnread ? 1 : 0;
+        updateBadge();
+      }
     });
   }
 
