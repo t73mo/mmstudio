@@ -4,7 +4,7 @@ import {getDatabase, ref, onValue, set, push, onDisconnect, serverTimestamp, upd
 const CFG = {
   apiKey: "AIzaSyD3XHJ3xdeJC_ALeIK4nOf1EASO39W3Gh0",
   authDomain: "mmstudio-86917.firebaseapp.com",
-  databaseURL: "https://mmstudio-86917-default-rtdb.firebaseio.com",
+  databaseURL: "https://mmstudio-86917-default-rtdb.europe-west1.firebasedatabase.app",
   projectId: "mmstudio-86917",
   storageBucket: "mmstudio-86917.firebasestorage.app",
   messagingSenderId: "466384625481",
