@@ -113,7 +113,7 @@ if(c)document.documentElement.className=c;
 var USERS={"Telman":"Kn0pKa78","Anastasia":"mm2026"};
 var NAMES={telman:"Тельман",anastasia:"Анастасия"};
 var CFG={apiKey:"AIzaSyD3XHJ3xdeJC_ALeIK4nOf1EASO39W3Gh0",authDomain:"mmstudio-86917.firebaseapp.com",databaseURL:"https://mmstudio-86917-default-rtdb.europe-west1.firebasedatabase.app",projectId:"mmstudio-86917",storageBucket:"mmstudio-86917.firebasestorage.app",messagingSenderId:"466384625481",appId:"1:466384625481:web:fb4bb7144d0d329be8c498"};
-var db,myId,myName,previewData=null,lastMsgTime=parseInt(localStorage.getItem("chat_lastSeen")||"0"),unreadCount=0,editingMsgId=null;
+var db,myId,myName,previewData=null,lastMsgTime=parseInt(localStorage.getItem("chat_lastSeen")||"0"),unreadCount=0,editingMsgId=null,chatInited=false;
 
 function doLogin(){
   var u=document.getElementById("usernameInput").value;
@@ -189,18 +189,22 @@ function loadMessages(){
     container.innerHTML=html;
     container.scrollTop=container.scrollHeight;
     var lastTime=msgs[msgs.length-1].time;
-    if(!document.hidden){
+    if(!chatInited){
       lastMsgTime=lastTime;
       localStorage.setItem("chat_lastSeen",lastMsgTime);
+      chatInited=true;
       markRead();
     }else if(lastTime>lastMsgTime){
-      unreadCount++;
-      document.title="("+unreadCount+") Чат | MM Studio";
-      if(Notification.permission==="granted"){
-        new Notification(NAMES[myId==="telman"?"anastasia":"telman"],{body:msgs[msgs.length-1].text||"Фото",icon:"../assets/favicon.svg"});
+      if(document.hidden){
+        unreadCount++;
+        document.title="("+unreadCount+") Чат | MM Studio";
+        if(Notification.permission==="granted"){
+          new Notification(NAMES[myId==="telman"?"anastasia":"telman"],{body:msgs[msgs.length-1].text||"Фото",icon:"../assets/favicon.svg"});
+        }
       }
       lastMsgTime=lastTime;
       localStorage.setItem("chat_lastSeen",lastMsgTime);
+      markRead();
     }
   });
 }

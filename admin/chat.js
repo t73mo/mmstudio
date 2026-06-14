@@ -13,6 +13,7 @@ var MMChat = (function() {
   var chatOpen = false;
   var unreadCount = 0;
   var lastSeenTime = parseInt(localStorage.getItem('chat_lastSeen') || '0');
+  var watchInited = false;
   var myId = null;
 
   function getAdminId() {
@@ -96,26 +97,29 @@ var MMChat = (function() {
       box.innerHTML = html;
       box.scrollTop = box.scrollHeight;
 
-      if (!chatOpen) {
-        var last = msgs[msgs.length - 1];
-        if (last && last.user !== myId && (!lastSeenTime || last.time > lastSeenTime)) {
-          unreadCount++;
-          updateBadge();
-        }
-      } else {
-        markRead();
-      }
-      if (msgs.length) {
-        lastSeenTime = msgs[msgs.length - 1].time;
+      var lastTime = msgs[msgs.length - 1].time;
+      if (!watchInited) {
+        lastSeenTime = lastTime;
         localStorage.setItem('chat_lastSeen', lastSeenTime);
+        watchInited = true;
+        markRead();
+      } else if (lastTime > lastSeenTime) {
+        if (!chatOpen) {
+          var last = msgs[msgs.length - 1];
+          if (last && last.user !== myId) {
+            unreadCount++;
+            updateBadge();
+          }
+        }
+        lastSeenTime = lastTime;
+        localStorage.setItem('chat_lastSeen', lastSeenTime);
+        markRead();
       }
     });
   }
 
   function markRead() {
     if (!myId || !db) return;
-    lastSeenTime = Date.now();
-    localStorage.setItem('chat_lastSeen', lastSeenTime);
     db.ref('messages').once('value', function(snap) {
       var updates = {};
       snap.forEach(function(ch) {
