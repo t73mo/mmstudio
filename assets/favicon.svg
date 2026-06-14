@@ -1,10 +1,6 @@
 <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect x="4" y="4" width="56" height="56" rx="14" fill="#24160D"/>
-  <path d="M12 46V18H17L23 31L29 18H34V46H29V29L24 39H22L17 29V46H12Z" fill="#FFF8F1"/>
-  <rect x="39" y="18" width="15" height="28" rx="2" fill="#AD4F2B"/>
-  <rect x="42" y="21" width="3" height="3" rx="0.5" fill="#FFF8F1"/>
-  <rect x="48" y="21" width="3" height="3" rx="0.5" fill="#FFF8F1"/>
-  <rect x="42" y="27" width="3" height="3" rx="0.5" fill="#FFF8F1"/>
-  <rect x="48" y="27" width="3" height="3" rx="0.5" fill="#FFF8F1"/>
-  <rect x="44" y="35" width="5" height="11" rx="1" fill="#FFF8F1"/>
+  <rect width="64" height="64" rx="12" fill="#111111"/>
+  <path d="M16 46V21L32 13L48 21V46" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <path d="M24 46V32L32 28L40 32V46" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <line x1="32" y1="13" x2="32" y2="28" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
 </svg>
