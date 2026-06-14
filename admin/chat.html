@@ -122,7 +122,7 @@ var USERS={"Telman":"Kn0pKa78","Anastasia":"mm2026"};
 var NAMES={telman:"Тельман",anastasia:"Анастасия"};
 var CFG={apiKey:"AIzaSyD3XHJ3xdeJC_ALeIK4nOf1EASO39W3Gh0",authDomain:"mmstudio-86917.firebaseapp.com",databaseURL:"https://mmstudio-86917-default-rtdb.europe-west1.firebasedatabase.app",projectId:"mmstudio-86917",storageBucket:"mmstudio-86917.firebasestorage.app",messagingSenderId:"466384625481",appId:"1:466384625481:web:fb4bb7144d0d329be8c498"};
 var VAPID_KEY="BJ_vMZzwlDnwXxOA84Vg8OmmK-Bjhm7BKGCMtlJUwr-Yb7YGEqqEPje3oj0vezA89LfRdmRPeNiN0P3-UnM7RSQ";
-var db,messaging,myId,myName,previewData=null,editingMsgId=null;
+var db,messaging,myId,myName,previewData=null,editingMsgId=null,lastNotifId=null;
 
 function doLogin(){
   var u=document.getElementById("usernameInput").value;
@@ -144,6 +144,25 @@ function initChat(){
   loadMessages();
   setupInput();
   setupFCM();
+  setupNotifListener();
+  if(Notification&&Notification.permission==="default") Notification.requestPermission();
+}
+
+function showNotif(title,body){
+  if(typeof Notification==="undefined"||Notification.permission!=="granted")return;
+  try{new Notification(title,{body:body,icon:"../assets/favicon.svg"});}catch(e){}
+}
+
+function setupNotifListener(){
+  db.ref("messages").orderByChild("time").limitToLast(1).on("value",function(snap){
+    snap.forEach(function(ch){
+      var m=ch.val();
+      if(lastNotifId&&ch.key!==lastNotifId&&m.user!==myId&&document.hidden){
+        showNotif(m.name||"MM Studio",m.text||"Фото");
+      }
+      lastNotifId=ch.key;
+    });
+  });
 }
 
 function setupFCM(){
@@ -331,10 +350,6 @@ function sendPush(text){
 
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 function fmtTime(ts){return new Date(ts).toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"});}
-
-if(Notification&&Notification.permission==="default"){
-  document.addEventListener("click",function(){Notification.requestPermission();},{once:true});
-}
 
 if(localStorage.getItem("admin_auth")==="1"){
   var ls=document.getElementById("loginScreen");if(ls)ls.style.display="none";

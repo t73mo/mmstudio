@@ -14,6 +14,7 @@ var MMChat = (function() {
   var messaging = null;
   var chatOpen = false;
   var myId = null;
+  var lastNotifId = null;
 
   function getAdminId() {
     var u = localStorage.getItem("admin_user");
@@ -42,6 +43,8 @@ var MMChat = (function() {
     watchBadge();
     watchMessages();
     setupFCM();
+    setupNotifListener();
+    requestNotifPermission();
   }
 
   function setupFCM() {
@@ -63,6 +66,31 @@ var MMChat = (function() {
       var token = snap.val();
       if (!token) return;
       db.ref('pushQueue').push({token: token, title: NAMES[myId] || myId, body: text, url: '/mmstudio/admin/chat.html', ts: Date.now()});
+    });
+  }
+
+  function requestNotifPermission() {
+    if (typeof Notification === 'undefined') return;
+    if (Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
+  }
+
+  function showNotif(title, body) {
+    if (typeof Notification === 'undefined') return;
+    if (Notification.permission !== 'granted') return;
+    try { new Notification(title, {body: body, icon: '../assets/favicon.svg'}); } catch(e) {}
+  }
+
+  function setupNotifListener() {
+    db.ref('messages').orderByChild('time').limitToLast(1).on('value', function(snap) {
+      snap.forEach(function(ch) {
+        var m = ch.val();
+        if (lastNotifId && ch.key !== lastNotifId && m.user !== myId && !chatOpen) {
+          showNotif(m.name || 'MM Studio', m.text || 'Фото');
+        }
+        lastNotifId = ch.key;
+      });
     });
   }
 
