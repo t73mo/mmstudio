@@ -35,8 +35,8 @@ var MMChat = (function() {
     try {
       if (!firebase.apps.length) firebase.initializeApp(CFG);
       db = firebase.database();
-      messaging = firebase.messaging();
     } catch(e) { return; }
+    try { messaging = firebase.messaging(); } catch(e) { messaging = null; }
     buildUI();
     setupPresence();
     watchBadge();
