@@ -88,19 +88,8 @@ if(c)document.documentElement.className=c;
   window.OneSignalDeferred = window.OneSignalDeferred || [];
   OneSignalDeferred.push(async function(OneSignal) {
     await OneSignal.init({
-      appId: "129d5025-2692-4131-9e21-c61cca2da994",
-      notifyButton: { enable: false },
-      allowLocalhostAsHttps: true,
-      serviceWorkerPath: "../OneSignalSDKWorker.js",
-      enableSlidedown: true,
-      autoRegister: true,
-      autoResubscribe: true,
-      path: "/mmstudio/"
+      appId: "129d5025-2692-4131-9e21-c61cca2da994"
     });
-    try {
-      var isSub = OneSignal.User.PushSubscription.isPushEnabled;
-      if (!isSub) await OneSignal.User.PushSubscription.optIn();
-    } catch(e) {}
   });
 </script>
 </head><body>
