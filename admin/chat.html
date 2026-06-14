@@ -51,8 +51,8 @@ if(c)document.documentElement.className=c;
 .chat-input-bar{display:flex;align-items:flex-end;gap:8px;padding:10px 16px;border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;padding-bottom:max(10px,env(safe-area-inset-bottom))}
 .chat-attach{background:none;border:none;font-size:1.3rem;cursor:pointer;padding:8px;color:var(--muted);border-radius:8px;flex-shrink:0;line-height:1}
 .chat-attach:active{background:var(--hover)}
-.chat-input-wrap{flex:1;display:flex;align-items:flex-end;background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:4px 4px 4px 14px}
-.chat-input-wrap textarea{flex:1;border:none;background:transparent;font-size:0.88rem;font-family:inherit;outline:none;resize:none;max-height:120px;padding:6px 0;color:var(--text);line-height:1.4}
+.chat-input-wrap{flex:1;display:flex;align-items:center;background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:4px 4px 4px 14px}
+.chat-input-wrap textarea{flex:1;border:none;background:transparent;font-size:0.88rem;font-family:inherit;outline:none;resize:none;max-height:120px;padding:6px 0;color:var(--text);line-height:1.4;min-height:20px}
 .chat-send{background:var(--text);color:var(--bg);border:none;border-radius:50%;width:36px;height:36px;cursor:pointer;font-size:1rem;flex-shrink:0;display:flex;align-items:center;justify-content:center}
 .chat-send:active{opacity:.8}
 .chat-send:disabled{opacity:.3;cursor:default}
@@ -70,6 +70,12 @@ if(c)document.documentElement.className=c;
   .chat-messages{padding:24px 32px;max-width:800px;margin:0 auto;width:100%}
   .chat-input-bar{padding:12px 32px;max-width:800px;margin:0 auto;width:100%}
   .chat-msg{max-width:55%}
+}
+@media(max-width:768px){
+  .chat-attach{font-size:1.5rem;padding:10px}
+  .chat-send{width:40px;height:40px;font-size:1.1rem}
+  .chat-input-wrap{padding:6px 6px 6px 12px}
+  .chat-msg{max-width:88%}
 }
 </style>
 </head><body>
@@ -255,7 +261,6 @@ function setupInput(){
 
 function handleFile(e){
   var file=e.target.files[0];if(!file)return;
-  if(file.size>500000){alert("Файл слишком большой (макс 500КБ)");return;}
   var reader=new FileReader();
   reader.onload=function(ev){
     previewData=ev.target.result;
