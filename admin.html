@@ -75,9 +75,10 @@ td{color:var(--text)}
 <div class="login-box">
 <h1>MM Studio</h1>
 <p>Админ-панель</p>
-<input type="password" id="passwordInput" placeholder="Введите пароль" autofocus>
+<input type="text" id="usernameInput" placeholder="Логин" autofocus>
+<input type="password" id="passwordInput" placeholder="Пароль">
 <button onclick="login()">Войти</button>
-<div class="login-error" id="loginError">Неверный пароль</div>
+<div class="login-error" id="loginError">Неверный логин или пароль</div>
 </div></div>
 <div class="admin" id="adminPanel">
 <div class="admin-header">
@@ -94,10 +95,12 @@ td{color:var(--text)}
 </div>
 <script>
 const PASS = "Kn0pKa78";
+const USER = "Telman";
 
 function login() {
-  var input = document.getElementById("passwordInput").value;
-  if (input === PASS) {
+  var u = document.getElementById("usernameInput").value;
+  var p = document.getElementById("passwordInput").value;
+  if (u === USER && p === PASS) {
     document.getElementById("loginScreen").style.display = "none";
     document.getElementById("adminPanel").style.display = "block";
     localStorage.setItem("admin_auth", "1");
@@ -124,6 +127,9 @@ if (localStorage.getItem("admin_auth") === "1") {
 }
 
 document.getElementById("passwordInput").addEventListener("keydown", function(e) {
+  if (e.key === "Enter") login();
+});
+document.getElementById("usernameInput").addEventListener("keydown", function(e) {
   if (e.key === "Enter") login();
 });
 </script>
