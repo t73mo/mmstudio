@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Админ-панель | MM Studio</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Unbounded:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fafafa;--surface:#fff;--text:#111;--muted:#666;--border:#e5e5e5;--accent:#111;--green:#d9ead3;--orange:#fce4d6;--blue:#d0e0f3}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Manrope",sans-serif;color:var(--text);background:var(--bg);line-height:1.5}
+
+.login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+.login-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:40px;width:100%;max-width:360px;text-align:center}
+.login-box h1{font-family:"Unbounded",sans-serif;font-size:1.2rem;margin-bottom:8px}
+.login-box p{color:var(--muted);font-size:0.85rem;margin-bottom:24px}
+.login-box input{width:100%;padding:12px;border:1px solid var(--border);border-radius:8px;font-size:1rem;font-family:inherit;margin-bottom:12px;outline:none}
+.login-box input:focus{border-color:var(--text)}
+.login-box button{width:100%;padding:12px;background:var(--text);color:#fff;border:none;border-radius:8px;font-size:0.95rem;font-weight:600;cursor:pointer;font-family:inherit}
+.login-box button:hover{background:#333}
+.login-error{color:#c00;font-size:0.85rem;margin-top:8px;display:none}
+
+.admin{display:none;max-width:1120px;margin:0 auto;padding:24px}
+.admin-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.admin-header h1{font-family:"Unbounded",sans-serif;font-size:1.1rem}
+.admin-header button{padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:var(--surface);cursor:pointer;font-family:inherit;font-size:0.85rem}
+.admin-header button:hover{background:var(--border)}
+
+.nav-tabs{display:flex;gap:4px;margin-bottom:24px;flex-wrap:wrap}
+.nav-tabs button{padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:var(--surface);cursor:pointer;font-family:inherit;font-size:0.85rem;font-weight:500;color:var(--muted);transition:all 0.15s}
+.nav-tabs button.active{background:var(--text);color:#fff;border-color:var(--text)}
+.nav-tabs button:hover:not(.active){background:var(--border)}
+
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px}
+.card h2{font-size:1rem;margin-bottom:12px;font-family:"Unbounded",sans-serif}
+.card h3{font-size:0.9rem;margin-bottom:8px;color:var(--muted)}
+
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:24px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center}
+.stat-value{font-family:"Unbounded",sans-serif;font-size:1.5rem;font-weight:700;margin-bottom:4px}
+.stat-label{font-size:0.8rem;color:var(--muted)}
+.stat.green{border-color:#b6d7a8;background:var(--green)}
+.stat.orange{border-color:#f9cb9c;background:var(--orange)}
+.stat.blue{border-color:#a4c2f4;background:var(--blue)}
+
+table{width:100%;border-collapse:collapse;font-size:0.85rem}
+th,td{padding:10px 12px;border:1px solid var(--border);text-align:left}
+th{background:var(--bg);font-weight:700;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.03em;color:var(--muted)}
+td{color:var(--text)}
+
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:0.75rem;font-weight:600}
+.badge-green{background:var(--green);color:#2d740f}
+.badge-orange{background:var(--orange);color:#b45309}
+.badge-blue{background:var(--blue);color:#1a56db}
+.badge-red{background:#fce4e4;color:#c00}
+
+@media(max-width:600px){
+  .stat-grid{grid-template-columns:1fr 1fr}
+  .admin{padding:16px}
+  .nav-tabs{gap:4px}
+  .nav-tabs button{padding:6px 12px;font-size:0.8rem}
+  table{font-size:0.78rem}
+  th,td{padding:8px 6px}
+}
+</style>
+</head>
+<body>
+
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <h1>MM Studio</h1>
+    <p>Админ-панель</p>
+    <input type="password" id="passwordInput" placeholder="Введите пароль" autofocus>
+    <button onclick="login()">Войти</button>
+    <div class="login-error" id="loginError">Неверный пароль</div>
+  </div>
+</div>
+
+<div class="admin" id="adminPanel">
+  <div class="admin-header">
+    <h1>MM Studio — Админка</h1>
+    <button onclick="logout()">Выйти</button>
+  </div>
+
+  <div class="nav-tabs">
+    <button class="active" onclick="showTab('dashboard')">Главная</button>
+    <button onclick="showTab('plan')">План</button>
+    <button onclick="showTab('inventory')">Инвентарь</button>
+    <button onclick="showTab('tech')">Технологии</button>
+    <button onclick="showTab('machines')">Станки</button>
+    <button onclick="showTab('print3d')">3D печать</button>
+    <button onclick="showTab('materials')">Материалы</button>
+    <button onclick="showTab('marketing')">Маркетинг</button>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="tab-content active" id="tab-dashboard">
+    <div class="stat-grid">
+      <div class="stat green"><div class="stat-value">177</div><div class="stat-label">Инструментов</div></div>
+      <div class="stat blue"><div class="stat-value">133</div><div class="stat-label">Технологий</div></div>
+      <div class="stat orange"><div class="stat-value">88</div><div class="stat-label">Станков</div></div>
+      <div class="stat"><div class="stat-value">218</div><div class="stat-label">3D печать</div></div>
+      <div class="stat green"><div class="stat-value">41</div><div class="stat-label">Материалов</div></div>
+      <div class="stat blue"><div class="stat-value">56</div><div class="stat-label">Маркетинг</div></div>
+    </div>
+
+    <div class="card">
+      <h2>Краткая сводка</h2>
+      <table>
+        <tr><th>Раздел</th><th>Кол-во записей</th><th>Статус</th></tr>
+        <tr><td>План</td><td>65 строк</td><td><span class="badge badge-green">Активный</span></td></tr>
+        <tr><td>Инвентаризация</td><td>177 позиций</td><td><span class="badge badge-green">Заполнен</span></td></tr>
+        <tr><td>Технологии</td><td>133 технологии</td><td><span class="badge badge-green">Заполнен</span></td></tr>
+        <tr><td>Станки</td><td>88 строк</td><td><span class="badge badge-orange">Частично</span></td></tr>
+        <tr><td>3D печать</td><td>218 строк</td><td><span class="badge badge-green">Заполнен</span></td></tr>
+        <tr><td>Материалы</td><td>41 строка</td><td><span class="badge badge-green">Заполнен</span></td></tr>
+        <tr><td>Предложения</td><td>61 строка</td><td><span class="badge badge-blue">Обзор</span></td></tr>
+        <tr><td>Проблемы/решения</td><td>8 записей</td><td><span class="badge badge-green">Готово</span></td></tr>
+        <tr><td>Оценка и анализ</td><td>26 строк</td><td><span class="badge badge-green">Заполнен</span></td></tr>
+        <tr><td>Маркетинг</td><td>56 строк</td><td><span class="badge badge-green">Заполнен</span></td></tr>
+        <tr><td>Цены</td><td>117 позиций</td><td><span class="badge badge-green">Заполнен</span></td></tr>
+        <tr><td>Первая необходимость</td><td>56 позиций</td><td><span class="badge badge-green">Готово</span></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- PLAN -->
+  <div class="tab-content" id="tab-plan">
+    <div class="card">
+      <h2>План работ</h2>
+      <table>
+        <tr><th>Этап</th><th>Действие</th><th>Ответственный</th><th>Готовность</th><th>Срок</th></tr>
+        <tr><td>1. Сбор данных</td><td>Собрать базу оборудования и расходников</td><td>Т/А</td><td><span class="badge badge-green">95%</span></td><td>до 26.04</td></tr>
+        <tr><td></td><td>Собрать данные для лазера/станка</td><td>А</td><td><span class="badge badge-green">95%</span></td><td>до 26.04</td></tr>
+        <tr><td>2. Анализ</td><td>Сравнение с конкурентами</td><td>—</td><td><span class="badge badge-orange">В работе</span></td><td>—</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- INVENTORY -->
+  <div class="tab-content" id="tab-inventory">
+    <div class="card">
+      <h2>Инвентаризация (ключевые позиции)</h2>
+      <table>
+        <tr><th>Категория</th><th>Инструмент</th><th>Бренд</th><th>Частота</th><th>Цена</th></tr>
+        <tr><td>Ручная резка</td><td>Макетный нож (скальпель)</td><td>OLFA</td><td>Очень часто</td><td>—</td></tr>
+        <tr><td></td><td>Канцелярский нож</td><td>Stanley</td><td>Часто</td><td>—</td></tr>
+        <tr><td></td><td>Кусачки для 3D печати</td><td>PLATO 170</td><td>Часто</td><td>500-650</td></tr>
+        <tr><td>Измерительный</td><td>Штангенциркуль</td><td>—</td><td>Редко</td><td>—</td></tr>
+        <tr><td>Клеи</td><td>Космофен</td><td>WIKO</td><td>Часто</td><td>—</td></tr>
+        <tr><td></td><td>Гель клей</td><td>Akfix 705</td><td>Часто</td><td>—</td></tr>
+        <tr><td>Покраска</td><td>Аэрограф</td><td>—</td><td>Часто</td><td>—</td></tr>
+        <tr><td></td><td>Компрессор</td><td>—</td><td>Часто</td><td>—</td></tr>
+        <tr><td>Электрика</td><td>Паяльник со станцией</td><td>—</td><td>—</td><td>—</td></tr>
+        <tr><td>СИЗ</td><td>Респиратор полумаска + фильтры</td><td>—</td><td>—</td><td>900-1100</td></tr>
+        <tr><td>3D печать</td><td>Принтер полимерный</td><td>Anycubic Photon M3 MAX</td><td>Часто</td><td>—</td></tr>
+        <tr><td></td><td>Мойка ультразвуковая</td><td>ULTRASONIC CLEANER</td><td>Часто</td><td>16-18к</td></tr>
+        <tr><td>Деревья</td><td>Булавки портновские</td><td>—</td><td>Часто</td><td>480шт=150р</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- TECH -->
+  <div class="tab-content" id="tab-tech">
+    <div class="card">
+      <h2>Технологии (основные)</h2>
+      <table>
+        <tr><th>Название</th><th>Применение</th></tr>
+        <tr><td>Лазерная резка</td><td>Картон, АБС, акрил, самоклейка</td></tr>
+        <tr><td>Фрезеровка</td><td>ПВХ, фанера, ЛДСП</td></tr>
+        <tr><td>3D печать SLA</td><td>Мелкие детали, фигурки, компоненты</td></tr>
+        <tr><td>3D печать ФДМ</td><td>Крупные детали (редко)</td></tr>
+        <tr><td>Покраска аэрографом</td><td>Тонкая покраска деталей</td></tr>
+        <tr><td>Флокирование</td><td>Имитация газонов, травяного покрова</td></tr>
+        <tr><td>Заливка эпоксидкой</td><td>Имитация водоёмов</td></tr>
+        <tr><td>Пайка электроники</td><td>Подсветка макетов</td></tr>
+        <tr><td>УФ склейка</td><td>Акрил, прозрачные элементы</td></tr>
+        <tr><td>Полировка</td><td>Акрил, рамы, тумбы</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- MACHINES -->
+  <div class="tab-content" id="tab-machines">
+    <div class="card">
+      <h2>Станки и оборудование</h2>
+      <table>
+        <tr><th>Станок</th><th>Фирма</th><th>Назначение</th></tr>
+        <tr><td>Лазерный станок</td><td>—</td><td>Резка и гравировка картона, АБС, акрила, плёнки</td></tr>
+        <tr><td>Фрезерный станок</td><td>—</td><td>Раскрой ПВХ, фанеры, ЛДСП</td></tr>
+        <tr><td>Точильный станок</td><td>Doppelscheifer DS125/4</td><td>Заточка фрез</td></tr>
+        <tr><td>Микротокарный станок</td><td>—</td><td>Мелкие точёные детали (мебельный цех)</td></tr>
+        <tr><td>Мини-пила со столиком</td><td>NoveLife Mini Table Saw</td><td>Нарезка бруса</td></tr>
+        <tr><td>Пила дисковая</td><td>OMAX 50101</td><td>Нарезка бруса</td></tr>
+        <tr><td>Реноватор</td><td>PROXXON LU-6868</td><td>Вырезание отверстий, шлифовка торцов</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h2>Режимы для лазера</h2>
+      <table>
+        <tr><th>Материал</th><th>Операция</th><th>Скорость</th><th>Примечание</th></tr>
+        <tr><td>Картон</td><td>Рез</td><td>30-50</td><td></td></tr>
+        <tr><td></td><td>Гравировка</td><td>50</td><td></td></tr>
+        <tr><td>АБС 0.6</td><td>Рез</td><td>30</td><td></td></tr>
+        <tr><td>Самоклейка</td><td>Рез</td><td>50</td><td>Резать обратной стороной вверх</td></tr>
+        <tr><td>Серебро</td><td>Рез</td><td>30</td><td></td></tr>
+        <tr><td>Пленка (беклит)</td><td>Рез</td><td>30</td><td>2 прохода если 3 слоя</td></tr>
+        <tr><td>Акрил</td><td>Рез</td><td>30</td><td>Кол-во проходов от толщины</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 3D PRINT -->
+  <div class="tab-content" id="tab-print3d">
+    <div class="card">
+      <h2>3D печать — смолы</h2>
+      <table>
+        <tr><th>Смола</th><th>Фирма</th><th>Цена/л</th><th>На складе</th></tr>
+        <tr><td>Прозрачная ЭКО</td><td>—</td><td>—</td><td>—</td></tr>
+        <tr><td>Серая ЭКО</td><td>—</td><td>—</td><td>—</td></tr>
+        <tr><td>Белая ЭКО</td><td>—</td><td>1610</td><td>—</td></tr>
+        <tr><td>Сверхпрочная</td><td>Conjure Rigid</td><td>1921</td><td>0.2л</td></tr>
+        <tr><td>Прозрачная обычная</td><td>—</td><td>—</td><td>1л</td></tr>
+        <tr><td>Телесная</td><td>—</td><td>1200</td><td>—</td></tr>
+        <tr><td>Сверх быстрая</td><td>—</td><td>—</td><td>5л</td></tr>
+        <tr><td>ABS Like Resin Pro 2</td><td>—</td><td>—</td><td>3+ л</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h2>3D печать — экструзия (ФДМ)</h2>
+      <table>
+        <tr><th>Пластик</th><th>На складе</th></tr>
+        <tr><td>PLA серый</td><td>1.5 кг</td></tr>
+        <tr><td>PLA жёлтый</td><td>2 кг</td></tr>
+        <tr><td>АБС</td><td>1.5 кг</td></tr>
+        <tr><td>WATSON BLUE</td><td>0.8 кг</td></tr>
+        <tr><td>SBS</td><td>1 кг</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- MATERIALS -->
+  <div class="tab-content" id="tab-materials">
+    <div class="card">
+      <h2>Материалы листовые</h2>
+      <table>
+        <tr><th>Группа</th><th>Материал</th><th>Применение</th><th>Подрядчик</th></tr>
+        <tr><td>АБС</td><td>АБС текстурированный 1мм</td><td>Имитация воды/песка</td><td>—</td></tr>
+        <tr><td></td><td>АБС серебро сатин 0.5-1.5мм</td><td>Таблички</td><td>Rowmark, Shenmei</td></tr>
+        <tr><td>ПВХ</td><td>ПВХ 1-10мм</td><td>Подмакетник, помощники, детали</td><td>Ультра Принт, ФреЗА</td></tr>
+        <tr><td>Полистирол</td><td>Полистирол белый/чёрный 1-3мм</td><td>Здания/детали</td><td>—</td></tr>
+        <tr><td>Оргстекло</td><td>Акрил прозрачный 2-10мм</td><td>Купола, детали</td><td>ФреЗА</td></tr>
+        <tr><td></td><td>Акрил молочный 2-10мм</td><td>Подмакетники, детали</td><td>—</td></tr>
+        <tr><td>Дерево</td><td>Фанера</td><td>Короба, подставки</td><td>—</td></tr>
+        <tr><td></td><td>ЛДСП / МДФ</td><td>Столы, тумбы</td><td>Алексей (7 988 587 69 00)</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h2>Материалы рулонные</h2>
+      <table>
+        <tr><th>Материал</th><th>Применение</th><th>Подрядчик</th></tr>
+        <tr><td>Наклейка самоклеющаяся</td><td>Разметка парковок</td><td>Ультра Принт</td></tr>
+        <tr><td>Беклит</td><td>Окна (светорассеивание)</td><td>Маркетплейс</td></tr>
+        <tr><td>Плёнка серая</td><td>Окна</td><td>Маркетплейс</td></tr>
+        <tr><td>Плёнка зеркальная</td><td>Окна</td><td>Маркетплейс</td></tr>
+        <tr><td>Плёнки Оракал</td><td>Окна</td><td>Типография</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h2>Печать</h2>
+      <table>
+        <tr><th>Тип</th><th>Применение</th><th>Подрядчик</th></tr>
+        <tr><td>Интерьерная и УФ печать</td><td>Таблички, текстуры</td><td>Ультра Принт</td></tr>
+        <tr><td>ДТФ печать</td><td>Таблички, лого</td><td>«Сфера» (Батайск)</td></tr>
+        <tr><td>УФ печать планшетная</td><td>—</td><td>РПК "Микс"</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- MARKETING -->
+  <div class="tab-content" id="tab-marketing">
+    <div class="card">
+      <h2>Маркетинг-план (этапы)</h2>
+      <table>
+        <tr><th>Этап</th><th>Шаг</th><th>Сроки</th><th>Бюджет</th></tr>
+        <tr><td>Позиционирование</td><td>Определить УТП</td><td>1-2 недели</td><td>0</td></tr>
+        <tr><td></td><td>Определить ЦА</td><td>1 неделя</td><td>0</td></tr>
+        <tr><td></td><td>Цена (середина-премиум)</td><td>1 неделя</td><td>0</td></tr>
+        <tr><td>Соцсети</td><td>Telegram-канал</td><td>Постоянно</td><td>0</td></tr>
+        <tr><td></td><td>Instagram / VK</td><td>Постоянно</td><td>0</td></tr>
+        <tr><td></td><td>YouTube / Rutube</td><td>1-2 видео/мес</td><td>0</td></tr>
+        <tr><td>Портфолио</td><td>Лучшие работы (8-12)</td><td>1-2 нед</td><td>10-30к</td></tr>
+        <tr><td>Сайт/SEO</td><td>Создать сайт</td><td>1-2 нед</td><td>5-20к</td></tr>
+        <tr><td></td><td>SEO</td><td>Постоянно</td><td>0</td></tr>
+        <tr><td>Прямая продажа</td><td>База клиентов (10-20)</td><td>1-2 нед</td><td>0</td></tr>
+        <tr><td></td><td>Холодные звонки</td><td>Постоянно</td><td>0</td></tr>
+        <tr><td>Партнёрства</td><td>Партнёрства с бюро</td><td>Постоянно</td><td>0</td></tr>
+        <tr><td></td><td>Выставки</td><td>1-2/год</td><td>50-200к</td></tr>
+        <tr><td>Реклама</td><td>Яндекс.Директ</td><td>Постоянно</td><td>20-50к/мес</td></tr>
+        <tr><td></td><td>Таргет VK</td><td>Постоянно</td><td>10-30к/мес</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h2>Что делать прямо сейчас</h2>
+      <table>
+        <tr><th>№</th><th>Действие</th><th>Срок</th></tr>
+        <tr><td>1</td><td>Telegram-канал</td><td>1 день</td></tr>
+        <tr><td>2</td><td>Яндекс.Бизнес (карточка)</td><td>1 день</td></tr>
+        <tr><td>3</td><td>База 10-20 клиентов</td><td>1-2 дня</td></tr>
+        <tr><td>4</td><td>Фото лучших работ</td><td>1-2 дня</td></tr>
+        <tr><td>5</td><td>Скрипт звонка</td><td>1 день</td></tr>
+        <tr><td>6</td><td>Первые 5 обзвонов</td><td>1-2 дня</td></tr>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const PASS_HASH = "0b14d531fa86a2a48e77a598e13d7e8b"; // md5 of "mm2026"
+
+function login() {
+  const input = document.getElementById("passwordInput").value;
+  const hash = md5(input);
+  if (hash === PASS_HASH) {
+    document.getElementById("loginScreen").style.display = "none";
+    document.getElementById("adminPanel").style.display = "block";
+    localStorage.setItem("admin_auth", "1");
+  } else {
+    document.getElementById("loginError").style.display = "block";
+  }
+}
+
+function logout() {
+  localStorage.removeItem("admin_auth");
+  location.reload();
+}
+
+function showTab(id) {
+  document.querySelectorAll(".tab-content").forEach(t => t.classList.remove("active"));
+  document.querySelectorAll(".nav-tabs button").forEach(b => b.classList.remove("active"));
+  document.getElementById("tab-" + id).classList.add("active");
+  event.target.classList.add("active");
+}
+
+// Check if already logged in
+if (localStorage.getItem("admin_auth") === "1") {
+  document.getElementById("loginScreen").style.display = "none";
+  document.getElementById("adminPanel").style.display = "block";
+}
+
+// Enter key to login
+document.getElementById("passwordInput").addEventListener("keydown", e => {
+  if (e.key === "Enter") login();
+});
+
+// Simple MD5 (for demo purposes only)
+function md5(s){function L(k,d){return(k<<d)|(k>>>(32-d))}function K(G,k){var I,d,F,H,x;F=(G&2147483648);H=(k&2147483648);I=(G&1073741824);d=(k&1073741824);x=(G&1073741823)+(k&1073741823);if(I&d)return(x^2147483648^F^H);if(I|d){if(x&1073741824)return(x^3221225472^F^H);else return(x^1073741824^F^H)}else return(x^F^H)}function r(d,F,k){return(d&F)|((~d)&k)}function q(d,F,k){return(d&k)|(F&(~k))}function p(d,F,k){return(d^F^k)}function n(d,F,k){return(F^(d|(~k)))}function u(G,F,aa,Z,k,H,I){G=K(G,K(K(r(F,aa,Z),k),I));return K(L(G,H),F)}function f(G,F,aa,Z,k,H,I){G=K(G,K(K(q(F,aa,Z),k),I));return K(L(G,H),F)}function D(G,F,aa,Z,k,H,I){G=K(G,K(K(p(F,aa,Z),k),I));return K(L(G,H),F)}function t(G,F,aa,Z,k,H,I){G=K(G,K(K(n(F,aa,Z),k),I));return K(L(G,H),F)}function e(G){var Z;var F=G.length;var x=F+8;var k=(x-(x%64))/64;var I=(k+1)*16;var aa=Array(I-1);var d=0;var H=0;while(H<F){Z=(H-(H%4))/4;d=(H%4)*8;aa[Z]=(aa[Z]|(G.charCodeAt(H)<<d));H++}Z=(H-(H%4))/4;d=(H%4)*8;aa[Z]=aa[Z]|(128<<d);aa[I-2]=F<<3;aa[I-1]=F>>>29;return aa}function B(x){var k="",F="",G,d;for(d=0;d<=3;d++){G=(x>>>(d*8))&255;F="0"+G.toString(16);k=k+F.substr(F.length-2,2)}return k}var C=[];var P,h,E,v,g,Y,X,W,V;var S=7,Q=12,N=17,M=22;var A=5,z=9,y=14,w=20;var o=4,m=11,l=16,j=23;var U=6,T=10,R=15,O=21;s=unescape(encodeURIComponent(s));C=e(s);Y=1732584193;X=4023233417;W=2562383102;V=271733878;for(P=0;P<C.length;P+=16){h=Y;E=X;v=W;g=V;Y=u(Y,X,W,V,C[P],S,3614090360);V=u(V,Y,X,W,C[P+1],Q,3905402710);W=u(W,V,Y,X,C[P+2],N,606105819);X=u(X,W,V,Y,C[P+3],M,3250441966);Y=u(Y,X,W,V,C[P+4],S,4118548399);V=u(V,Y,X,W,C[P+5],Q,1200080426);W=u(W,V,Y,X,C[P+6],N,2821735955);X=u(X,W,V,Y,C[P+7],M,4249261313);Y=u(Y,X,W,V,C[P+8],S,1770035416);V=u(V,Y,X,W,C[P+9],Q,2336552879);W=u(W,V,Y,X,C[P+10],N,4294925233);X=u(X,W,V,Y,C[P+11],M,2304563134);Y=u(Y,X,W,V,C[P+12],S,1804603682);V=u(V,Y,X,W,C[P+13],Q,4254626195);W=u(W,V,Y,X,C[P+14],N,2792965006);X=u(X,W,V,Y,C[P+15],M,1236535329);Y=f(Y,X,W,V,C[P+1],A,4129170786);V=f(V,Y,X,W,C[P+6],z,3225465664);W=f(W,V,Y,X,C[P+11],y,643717713);X=f(X,W,V,Y,C[P],w,3921069994);Y=f(Y,X,W,V,C[P+5],A,3593408605);V=f(V,Y,X,W,C[P+10],z,38016083);W=f(W,V,Y,X,C[P+15],y,3634588480);X=f(X,W,V,Y,C[P+4],w,3889429448);Y=f(Y,X,W,V,C[P+9],A,568446438);V=f(V,Y,X,W,C[P+14],z,3275163606);W=f(W,V,Y,X,C[P+3],y,4107603335);X=f(X,W,V,Y,C[P+8],w,1163531501);Y=f(Y,X,W,V,C[P+13],A,2850285829);V=f(V,Y,X,W,C[P+2],z,4243563512);W=f(W,V,Y,X,C[P+7],y,1735328473);X=f(X,W,V,Y,C[P+12],w,2368359562);Y=D(Y,X,W,V,C[P+5],o,4294588738);V=D(V,Y,X,W,C[P+8],m,2272392833);W=D(W,V,Y,X,C[P+11],l,1839030562);X=D(X,W,V,Y,C[P+14],j,4259657740);Y=D(Y,X,W,V,C[P+1],o,2763975236);V=D(V,Y,X,W,C[P+4],m,1272893353);W=D(W,V,Y,X,C[P+7],l,4139469664);X=D(X,W,V,Y,C[P+10],j,3200236656);Y=D(Y,X,W,V,C[P+13],o,681279174);V=D(V,Y,X,W,C[P],m,3936430074);W=D(W,V,Y,X,C[P+3],l,3572445317);X=D(X,W,V,Y,C[P+6],j,76029189);Y=D(Y,X,W,V,C[P+9],o,3654602809);V=D(V,Y,X,W,C[P+12],m,3873151461);W=D(W,V,Y,X,C[P+15],l,530742520);X=D(X,W,V,Y,C[P+2],j,3299628645);Y=t(Y,X,W,V,C[P],U,4096336452);V=t(V,Y,X,W,C[P+7],T,1126891415);W=t(W,V,Y,X,C[P+14],R,2878612391);X=t(X,W,V,Y,C[P+5],O,4237533241);Y=t(Y,X,W,V,C[P+12],U,1700485571);V=t(V,Y,X,W,C[P+3],T,2399980690);W=t(W,V,Y,X,C[P+10],R,4293915773);X=t(X,W,V,Y,C[P+1],O,2240044497);Y=t(Y,X,W,V,C[P+8],U,1873313359);V=t(V,Y,X,W,C[P+15],T,4264355552);W=t(W,V,Y,X,C[P+6],R,2734768916);X=t(X,W,V,Y,C[P+13],O,1309151649);Y=t(Y,X,W,V,C[P+4],U,4149444226);V=t(V,Y,X,W,C[P+11],T,3174756917);W=t(W,V,Y,X,C[P+2],R,718787259);X=t(X,W,V,Y,C[P+9],O,3951481745);Y=K(Y,h);X=K(X,E);W=K(W,v);V=K(V,g)}return(B(Y)+B(X)+B(W)+B(V)).toLowerCase()}
+</script>
+</body>
+</html>
