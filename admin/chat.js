@@ -15,7 +15,7 @@ var MMChat = (function() {
   var presenceData = {};
 
   function getAdminId() {
-    var u = localStorage.getItem("mm_user");
+    var u = localStorage.getItem("admin_user");
     if (!u) return null;
     return u.toLowerCase();
   }
