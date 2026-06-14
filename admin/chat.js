@@ -13,6 +13,8 @@ var MMChat = (function() {
   var db = null;
   var chatOpen = false;
   var presenceData = {};
+  var unreadCount = 0;
+  var lastSeenTime = 0;
 
   function getAdminId() {
     var u = localStorage.getItem("admin_user");
@@ -70,17 +72,32 @@ var MMChat = (function() {
 
     db.ref('messages').orderByChild('time').on('value', function(snap) {
       var box = document.getElementById('chat-messages');
-      if (!box) return;
+      var myId = getAdminId();
       var msgs = [];
       snap.forEach(function(ch) { msgs.push(ch.val()); });
-      box.innerHTML = msgs.map(function(m) {
-        var mine = m.user === id;
-        return '<div class="chat-msg ' + (mine ? 'chat-me' : 'chat-other') + '">' +
-          '<div class="chat-msg-name">' + esc(m.name) + '</div>' +
-          '<div class="chat-msg-text">' + esc(m.text) + '</div>' +
-          '<div class="chat-msg-time">' + fmtTime(m.time) + '</div></div>';
-      }).join('');
-      box.scrollTop = box.scrollHeight;
+      if (box) {
+        box.innerHTML = msgs.map(function(m) {
+          var mine = m.user === myId;
+          var imgHtml = '';
+          if (m.image) imgHtml = '<img class="chat-msg-img" src="' + esc(m.image) + '" loading="lazy" onclick="window.open(this.src)">';
+          return '<div class="chat-msg ' + (mine ? 'chat-me' : 'chat-other') + '">' +
+            (mine ? '' : '<div class="chat-msg-name">' + esc(m.name) + '</div>') +
+            imgHtml +
+            (m.text ? '<div class="chat-msg-text">' + esc(m.text) + '</div>' : '') +
+            '<div class="chat-msg-time">' + fmtTime(m.time) + '</div></div>';
+        }).join('');
+        box.scrollTop = box.scrollHeight;
+      }
+      if (!chatOpen && msgs.length) {
+        var last = msgs[msgs.length - 1];
+        if (last.user !== myId && (!lastSeenTime || last.time > lastSeenTime)) {
+          unreadCount++;
+          var badge = document.getElementById('chatBadge');
+          if (badge) { badge.textContent = unreadCount; badge.classList.add('show'); }
+          document.title = '(' + unreadCount + ') ' + document.title.replace(/^\(\d+\)\s*/, '');
+        }
+      }
+      if (msgs.length) lastSeenTime = msgs[msgs.length - 1].time;
     });
   }
 
@@ -97,7 +114,7 @@ var MMChat = (function() {
 
     var btn = document.createElement('button');
     btn.id = 'chat-toggle-btn';
-    btn.innerHTML = '&#9993;';
+    btn.innerHTML = '&#9993;<span class="notif-badge" id="chatBadge"></span>';
     btn.title = 'Чат';
     btn.onclick = function() { toggleChat(); };
     header.appendChild(btn);
@@ -106,6 +123,7 @@ var MMChat = (function() {
     panel.id = 'chat-panel';
     panel.innerHTML =
       '<div class="chat-header"><span class="chat-title">Чат</span>' +
+      '<a href="chat.html" style="font-size:0.72rem;color:var(--muted);text-decoration:none;margin-right:8px" title="Открыть полный чат">&#9998; Полный экран</a>' +
       '<button class="chat-close" onclick="MMChat.toggleChat()">&#10005;</button></div>' +
       '<div class="chat-messages" id="chat-messages"></div>' +
       '<div class="chat-input-row">' +
@@ -128,6 +146,12 @@ var MMChat = (function() {
     chatOpen = !chatOpen;
     var p = document.getElementById('chat-panel');
     if (p) p.classList.toggle('open', chatOpen);
+    if (chatOpen) {
+      unreadCount = 0;
+      var badge = document.getElementById('chatBadge');
+      if (badge) { badge.textContent = ''; badge.classList.remove('show'); }
+      document.title = document.title.replace(/^\(\d+\)\s*/, '');
+    }
   }
 
   function sendMsg(text) {
