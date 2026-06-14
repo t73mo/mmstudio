@@ -28,7 +28,9 @@ function toggleSidebar(){document.getElementById("sidebar").classList.toggle("op
 function closeSidebar(){document.getElementById("sidebar").classList.remove("open");var o=document.getElementById("sidebarOverlay");if(o)o.classList.remove("open");}
 function toggleTheme(){document.documentElement.classList.toggle("dark");var isDark=document.documentElement.classList.contains("dark");localStorage.setItem("mm_theme",isDark?"dark":"light");updateThemeIcon();}
 function updateThemeIcon(){var isDark=document.documentElement.classList.contains("dark");var ic=document.getElementById("themeIcon");var lb=document.getElementById("themeLabel");if(ic)ic.textContent=isDark?"light_mode":"dark_mode";if(lb)lb.textContent=isDark?"Светлая тема":"Тёмная тема";}
-function applyTheme(){var t=localStorage.getItem("mm_theme");if(t==="dark"){document.documentElement.classList.add("dark");}else if(!t&&window.matchMedia&&window.matchMedia("(prefers-color-scheme:dark)").matches){document.documentElement.classList.add("dark");}updateThemeIcon();}
+function applyTheme(){var t=localStorage.getItem("mm_theme");if(t==="dark"){document.documentElement.classList.add("dark");}else if(!t){autoTheme();}updateThemeIcon();}
+function autoTheme(){if(window.matchMedia&&window.matchMedia("(prefers-color-scheme:dark)").matches){document.documentElement.classList.add("dark");}else{document.documentElement.classList.remove("dark");}updateThemeIcon();}
+if(window.matchMedia){window.matchMedia("(prefers-color-scheme:dark)").addEventListener("change",function(){if(!localStorage.getItem("mm_theme"))autoTheme();});}
 function escHtml(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
 
 function getUrlParam(name){

@@ -131,6 +131,3 @@ body.dark .search-result mark{background:#554400;color:#ffeaa7}
   .card-actions button{padding:8px 12px;font-size:0.78rem}
   .modal{padding:16px 16px 20px}
 }
-@media(prefers-color-scheme:dark){
-  body:not(.light){--bg:#111;--surface:#1a1a1a;--text:#e8e8e8;--text2:#aaa;--muted:#777;--border:#333;--hover:#252525;--shadow:rgba(0,0,0,0.3)}
-}
