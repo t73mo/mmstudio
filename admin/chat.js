@@ -8,10 +8,10 @@ var MMChat = (function() {
     messagingSenderId: "466384625481",
     appId: "1:466384625481:web:fb4bb7144d0d329be8c498"
   };
-  var ONESIGNAL_APP_ID = '129d5025-2692-4131-9e21-c61cca2da994';
-  var ONESIGNAL_REST_KEY = '';
+  var VAPID_KEY = 'BJ_vMZzwlDnwXxOA84Vg8OmmK-Bjhm7BKGCMtlJUwr-Yb7YGEqqEPje3oj0vezA89LfRdmRPeNiN0P3-UnM7RSQ';
   var NAMES = {telman:"Тельман", anastasia:"Анастасия"};
   var db = null;
+  var messaging = null;
   var chatOpen = false;
   var myId = null;
 
@@ -35,49 +35,35 @@ var MMChat = (function() {
     try {
       if (!firebase.apps.length) firebase.initializeApp(CFG);
       db = firebase.database();
+      messaging = firebase.messaging();
     } catch(e) { return; }
-    db.ref('onesignal_rest_key').once('value', function(snap) {
-      ONESIGNAL_REST_KEY = snap.val() || '';
-    });
     buildUI();
     setupPresence();
     watchBadge();
     watchMessages();
-    setupOneSignal();
+    setupFCM();
   }
 
-  function setupOneSignal() {
-    OneSignalDeferred.push(async function(OneSignal) {
-      await OneSignal.login(myId);
-      setTimeout(async function() {
-        try {
-          var isSub = OneSignal.User.PushSubscription.isPushEnabled;
-          if (!isSub && Notification.permission === 'default') {
-            await OneSignal.Slidedown.promptNative();
-          } else if (!isSub) {
-            await OneSignal.User.PushSubscription.optIn();
-          }
-        } catch(e) { console.error('OS sub error:', e); }
-      }, 3000);
+  function setupFCM() {
+    if (!messaging) return;
+    messaging.getToken({vapidKey: VAPID_KEY}).then(function(token) {
+      if (token) db.ref('fcmTokens/' + myId).set(token);
+    }).catch(function(e) { console.log('FCM token error:', e); });
+    messaging.onMessage(function(payload) {
+      var title = payload.notification.title || 'MM Studio';
+      var body = payload.notification.body || '';
+      if (Notification.permission === 'granted') {
+        new Notification(title, {body: body, icon: '../assets/favicon.svg'});
+      }
     });
   }
 
   function sendPush(recipientId, text) {
-    if (!ONESIGNAL_REST_KEY) return;
-    fetch('https://onesignal.com/api/v1/notifications', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Basic ' + ONESIGNAL_REST_KEY
-      },
-      body: JSON.stringify({
-        app_id: ONESIGNAL_APP_ID,
-        include_external_user_ids: [recipientId],
-        contents: { ru: text, en: text },
-        headings: { ru: NAMES[myId] || myId, en: NAMES[myId] || myId },
-        url: '/mmstudio/admin/chat.html'
-      })
-    }).catch(function() {});
+    db.ref('fcmTokens/' + recipientId).once('value', function(snap) {
+      var token = snap.val();
+      if (!token) return;
+      db.ref('pushQueue').push({token: token, title: NAMES[myId] || myId, body: text, url: '/mmstudio/admin/chat.html', ts: Date.now()});
+    });
   }
 
   function setupPresence() {

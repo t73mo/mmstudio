@@ -83,15 +83,9 @@ if(c)document.documentElement.className=c;
   .chat-msg{max-width:88%}
 }
 </style>
-<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-<script>
-  window.OneSignalDeferred = window.OneSignalDeferred || [];
-  OneSignalDeferred.push(async function(OneSignal) {
-    await OneSignal.init({
-      appId: "129d5025-2692-4131-9e21-c61cca2da994"
-    });
-  });
-</script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-compat.js"></script>
 </head><body>
 <div class="login-screen" id="loginScreen">
 <div class="login-box"><h1>MM Studio</h1><p>Чат</p>
@@ -127,7 +121,8 @@ if(c)document.documentElement.className=c;
 var USERS={"Telman":"Kn0pKa78","Anastasia":"mm2026"};
 var NAMES={telman:"Тельман",anastasia:"Анастасия"};
 var CFG={apiKey:"AIzaSyD3XHJ3xdeJC_ALeIK4nOf1EASO39W3Gh0",authDomain:"mmstudio-86917.firebaseapp.com",databaseURL:"https://mmstudio-86917-default-rtdb.europe-west1.firebasedatabase.app",projectId:"mmstudio-86917",storageBucket:"mmstudio-86917.firebasestorage.app",messagingSenderId:"466384625481",appId:"1:466384625481:web:fb4bb7144d0d329be8c498"};
-var db,myId,myName,previewData=null,editingMsgId=null;
+var VAPID_KEY="BJ_vMZzwlDnwXxOA84Vg8OmmK-Bjhm7BKGCMtlJUwr-Yb7YGEqqEPje3oj0vezA89LfRdmRPeNiN0P3-UnM7RSQ";
+var db,messaging,myId,myName,previewData=null,editingMsgId=null;
 
 function doLogin(){
   var u=document.getElementById("usernameInput").value;
@@ -143,33 +138,33 @@ function doLogin(){
 }
 
 function initChat(){
-  try{if(!firebase.apps.length)firebase.initializeApp(CFG);db=firebase.database();}catch(e){return;}
+  try{if(!firebase.apps.length)firebase.initializeApp(CFG);db=firebase.database();messaging=firebase.messaging();}catch(e){return;}
   setupPresence();
   loadMessages();
   setupInput();
-  setupOneSignal();
+  setupFCM();
 }
 
-function setupOneSignal(){
-  if(typeof OneSignal!=="undefined"){
-    OneSignalDeferred.push(async function(OneSignal){await OneSignal.login(myId);});
-  }
-  setTimeout(function(){
-    if(typeof OneSignal!=="undefined"){
-      OneSignalDeferred.push(async function(OneSignal){await OneSignal.login(myId);});
+function setupFCM(){
+  if(!messaging)return;
+  messaging.getToken({vapidKey:VAPID_KEY}).then(function(token){
+    if(token){db.ref("fcmTokens/"+myId).set(token);}
+  }).catch(function(e){console.log('FCM token error:',e);});
+  messaging.onMessage(function(payload){
+    var title=payload.notification.title||"MM Studio";
+    var body=payload.notification.body||"";
+    if(Notification.permission==="granted"){
+      new Notification(title,{body:body,icon:"../assets/favicon.svg"});
     }
-  },3000);
+  });
 }
 
 function sendPush(text){
-  db.ref("onesignal_rest_key").once("value",function(snap){
-    var key=snap.val();if(!key)return;
-    var otherId=myId==="telman"?"anastasia":"telman";
-    fetch("https://onesignal.com/api/v1/notifications",{
-      method:"POST",
-      headers:{"Content-Type":"application/json","Authorization":"Basic "+key},
-      body:JSON.stringify({app_id:"129d5025-2692-4131-9e21-c61cca2da994",include_external_user_ids:[otherId],contents:{ru:text,en:text},headings:{ru:myName,en:myName},url:"/mmstudio/admin/chat.html"})
-    }).catch(function(){});
+  var otherId=myId==="telman"?"anastasia":"telman";
+  db.ref("fcmTokens/"+otherId).once("value",function(snap){
+    var token=snap.val();
+    if(!token)return;
+    db.ref("pushQueue").push({token:token,title:myName,body:text,url:"/mmstudio/admin/chat.html",ts:Date.now()});
   });
 }
 
