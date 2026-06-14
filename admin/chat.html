@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover,interactive-widget=resizes-content">
 <title>Чат | MM Studio</title>
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="MM Chat">
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Unbounded:wght@500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
@@ -109,6 +114,7 @@ if(c)document.documentElement.className=c;
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-compat.js"></script>
 <script>
 var USERS={"Telman":"Kn0pKa78","Anastasia":"mm2026"};
 var NAMES={telman:"Тельман",anastasia:"Анастасия"};
@@ -133,6 +139,29 @@ function initChat(){
   setupPresence();
   loadMessages();
   setupInput();
+  setupFCM();
+}
+
+var fcm=null;
+function setupFCM(){
+  if(!("serviceWorker" in navigator)||!("Notification" in window))return;
+  navigator.serviceWorker.register("firebase-messaging-sw.js").then(function(reg){
+    try{
+      fcm=firebase.messaging();
+      fcm.useServiceWorker(reg);
+      if(Notification.permission==="granted"){saveToken();}
+      else if(Notification.permission!=="denied"){
+        Notification.requestPermission().then(function(p){if(p==="granted")saveToken();});
+      }
+    }catch(e){}
+  }).catch(function(){});
+}
+
+function saveToken(){
+  if(!fcm)return;
+  fcm.getToken({vapidKey:"BNH5xK5p4Vw8pVaZ9W3bKjKs7kCp3jJq0Z2r8v6m2n1o4p7q0r3s5t8u1w2x4y6z"}).then(function(token){
+    if(token) db.ref("fcmTokens/"+myId).set(token);
+  }).catch(function(){});
 }
 
 function setupPresence(){
@@ -279,10 +308,20 @@ function sendMsg(){
     var msg={user:myId,name:myName,text:text,time:Date.now(),read:false};
     if(previewData) msg.image=previewData;
     db.ref("messages").push(msg);
+    if(text) sendPush(text);
   }
   inp.value="";inp.style.height="auto";
   removePreview();
   document.getElementById("chatSendBtn").disabled=true;
+}
+
+function sendPush(text){
+  var otherId=myId==="telman"?"anastasia":"telman";
+  db.ref("fcmTokens/"+otherId).once("value",function(snap){
+    var token=snap.val();
+    if(!token)return;
+    db.ref("pushQueue").push({token:token,title:myName,body:text,url:"/mmstudio/admin/chat.html",ts:Date.now()});
+  });
 }
 
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}

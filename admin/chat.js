@@ -10,8 +10,10 @@ var MMChat = (function() {
   };
   var NAMES = {telman:"Тельман", anastasia:"Анастасия"};
   var db = null;
+  var messaging = null;
   var chatOpen = false;
   var myId = null;
+  var lastMsgKey = null;
 
   function getAdminId() {
     var u = localStorage.getItem("admin_user");
@@ -38,6 +40,54 @@ var MMChat = (function() {
     setupPresence();
     watchBadge();
     watchMessages();
+    setupFCM();
+  }
+
+  function setupFCM() {
+    if (!('serviceWorker' in navigator)) return;
+    navigator.serviceWorker.register('firebase-messaging-sw.js').then(function(reg) {
+      try {
+        if (typeof firebase.messaging === 'function') {
+          messaging = firebase.messaging();
+          messaging.useServiceWorker(reg);
+          requestPermission();
+        }
+      } catch(e) {}
+    }).catch(function() {});
+  }
+
+  function requestPermission() {
+    if (!messaging || !('Notification' in window)) return;
+    if (Notification.permission === 'granted') {
+      saveToken();
+    } else if (Notification.permission !== 'denied') {
+      Notification.requestPermission().then(function(p) {
+        if (p === 'granted') saveToken();
+      });
+    }
+  }
+
+  function saveToken() {
+    if (!messaging) return;
+    messaging.getToken().then(function(token) {
+      if (token) {
+        db.ref('fcmTokens/' + myId).set(token);
+      }
+    }).catch(function() {});
+  }
+
+  function sendPush(recipientId, text) {
+    db.ref('fcmTokens/' + recipientId).once('value', function(snap) {
+      var token = snap.val();
+      if (!token) return;
+      db.ref('pushQueue').push({
+        token: token,
+        title: NAMES[myId] || myId,
+        body: text,
+        url: '/mmstudio/admin/chat.html',
+        ts: Date.now()
+      });
+    });
   }
 
   function setupPresence() {
@@ -183,7 +233,9 @@ var MMChat = (function() {
 
   function sendMsg(text) {
     if (!myId || !db || !text.trim()) return;
+    var otherId = myId === 'telman' ? 'anastasia' : 'telman';
     db.ref('messages').push({user:myId, name:NAMES[myId]||myId, text:text.trim(), time:Date.now(), read:false});
+    sendPush(otherId, text.trim());
   }
 
   return { init: init, toggleChat: toggleChat };

@@ -3,3 +3,5 @@
 *.py
 __pycache__/
 excel_data.json
+node_modules/
+functions/node_modules/
