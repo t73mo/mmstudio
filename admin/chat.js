@@ -47,18 +47,17 @@ var MMChat = (function() {
   }
 
   function setupOneSignal() {
-    if (typeof OneSignal !== 'undefined') {
-      OneSignalDeferred.push(async function(OneSignal) {
-        await OneSignal.login(myId);
-      });
-    }
-    setTimeout(function() {
-      if (typeof OneSignal !== 'undefined') {
-        OneSignalDeferred.push(async function(OneSignal) {
-          await OneSignal.login(myId);
-        });
-      }
-    }, 3000);
+    OneSignalDeferred.push(async function(OneSignal) {
+      await OneSignal.login(myId);
+      setTimeout(async function() {
+        try {
+          var sub = OneSignal.User.PushSubscription;
+          if (sub && !sub.isPushEnabled) {
+            await sub.optIn();
+          }
+        } catch(e) {}
+      }, 2000);
+    });
   }
 
   function sendPush(recipientId, text) {
