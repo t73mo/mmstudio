@@ -12,7 +12,7 @@ var MMChat = (function() {
   var db = null;
   var chatOpen = false;
   var unreadCount = 0;
-  var lastSeenTime = 0;
+  var lastSeenTime = parseInt(localStorage.getItem('chat_lastSeen') || '0');
   var myId = null;
 
   function getAdminId() {
@@ -105,12 +105,17 @@ var MMChat = (function() {
       } else {
         markRead();
       }
-      if (msgs.length) lastSeenTime = msgs[msgs.length - 1].time;
+      if (msgs.length) {
+        lastSeenTime = msgs[msgs.length - 1].time;
+        localStorage.setItem('chat_lastSeen', lastSeenTime);
+      }
     });
   }
 
   function markRead() {
     if (!myId || !db) return;
+    lastSeenTime = Date.now();
+    localStorage.setItem('chat_lastSeen', lastSeenTime);
     db.ref('messages').once('value', function(snap) {
       var updates = {};
       snap.forEach(function(ch) {

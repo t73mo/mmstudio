@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
 <title>Чат | MM Studio</title>
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -25,7 +25,7 @@ if(c)document.documentElement.className=c;
 .login-box button{width:100%;padding:12px;background:var(--text);color:var(--bg);border:none;border-radius:8px;font-size:1rem;font-weight:600;cursor:pointer;font-family:inherit}
 .login-box button:hover{opacity:.85}
 .login-error{color:#c00;font-size:0.8rem;margin-top:6px;display:none}
-#chatApp{display:none;height:100vh;flex-direction:column;background:var(--bg)}
+#chatApp{display:none;height:100vh;height:100dvh;flex-direction:column;background:var(--bg)}
 .chat-topbar{display:flex;align-items:center;gap:8px;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0}
 .chat-topbar .back-btn{background:none;border:none;font-size:1.2rem;cursor:pointer;padding:8px;color:var(--text);border-radius:6px}
 .chat-topbar .back-btn:active{background:var(--hover)}
@@ -48,7 +48,7 @@ if(c)document.documentElement.className=c;
 .msg-check{font-size:0.62rem;line-height:1;opacity:.45}
 .msg-check.msg-read{opacity:.75}
 .msg-edited{font-size:0.56rem;opacity:.45;font-style:italic}
-.chat-input-bar{display:flex;align-items:flex-end;gap:8px;padding:10px 16px;border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;padding-bottom:max(10px,env(safe-area-inset-bottom))}
+.chat-input-bar{display:flex;align-items:flex-end;gap:8px;padding:10px 16px;border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;padding-bottom:max(10px,env(safe-area-inset-bottom,10px));position:sticky;bottom:0;z-index:10}
 .chat-attach{background:none;border:none;font-size:1.3rem;cursor:pointer;padding:8px;color:var(--muted);border-radius:8px;flex-shrink:0;line-height:1}
 .chat-attach:active{background:var(--hover)}
 .chat-input-wrap{flex:1;display:flex;align-items:center;background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:4px 4px 4px 14px}
@@ -113,7 +113,7 @@ if(c)document.documentElement.className=c;
 var USERS={"Telman":"Kn0pKa78","Anastasia":"mm2026"};
 var NAMES={telman:"Тельман",anastasia:"Анастасия"};
 var CFG={apiKey:"AIzaSyD3XHJ3xdeJC_ALeIK4nOf1EASO39W3Gh0",authDomain:"mmstudio-86917.firebaseapp.com",databaseURL:"https://mmstudio-86917-default-rtdb.europe-west1.firebasedatabase.app",projectId:"mmstudio-86917",storageBucket:"mmstudio-86917.firebasestorage.app",messagingSenderId:"466384625481",appId:"1:466384625481:web:fb4bb7144d0d329be8c498"};
-var db,myId,myName,previewData=null,lastMsgTime=0,unreadCount=0,editingMsgId=null;
+var db,myId,myName,previewData=null,lastMsgTime=parseInt(localStorage.getItem("chat_lastSeen")||"0"),unreadCount=0,editingMsgId=null;
 
 function doLogin(){
   var u=document.getElementById("usernameInput").value;
@@ -195,7 +195,9 @@ function loadMessages(){
 
 function markRead(){
   if(!myId||!db)return;
-  db.ref("messages").orderByChild("time").once("value",function(snap){
+  lastMsgTime=Date.now();
+  localStorage.setItem("chat_lastSeen",lastMsgTime);
+  db.ref("messages").once("value",function(snap){
     var updates={};
     snap.forEach(function(ch){
       var m=ch.val();
@@ -215,12 +217,16 @@ function checkNotifications(msgs){
       new Notification(NAMES[last.user]||last.user,{body:last.text||"Фото",icon:"../assets/favicon.svg"});
     }
   }
-  if(msgs.length) lastMsgTime=msgs[msgs.length-1].time;
+  if(msgs.length){
+    lastMsgTime=msgs[msgs.length-1].time;
+    localStorage.setItem("chat_lastSeen",lastMsgTime);
+  }
 }
 
 document.addEventListener("visibilitychange",function(){
   if(!document.hidden){unreadCount=0;document.title="Чат | MM Studio";markRead();}
 });
+window.addEventListener("focus",function(){unreadCount=0;document.title="Чат | MM Studio";markRead();});
 
 function onMsgContext(e,msgId,userId){
   e.preventDefault();
