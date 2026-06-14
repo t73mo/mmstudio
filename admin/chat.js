@@ -148,7 +148,10 @@ var MMChat = (function() {
     panel.innerHTML =
       '<div class="chat-popup-header">' +
         '<div class="chat-popup-title"><span id="chat-online-dot" class="chat-online-dot offline"></span><span>' + esc(getPartnerName()) + '</span></div>' +
-        '<button class="chat-popup-close" onclick="MMChat.toggleChat()">&#10005;</button>' +
+        '<div class="chat-popup-actions">' +
+          '<button onclick="window.location.href=\'chat.html\'" title="На весь экран">&#9974;</button>' +
+          '<button onclick="MMChat.toggleChat()" title="Закрыть">&#10005;</button>' +
+        '</div>' +
       '</div>' +
       '<div class="chat-popup-messages" id="chat-popup-messages"></div>' +
       '<div class="chat-popup-input">' +
