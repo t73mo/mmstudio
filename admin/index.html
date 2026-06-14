@@ -42,13 +42,10 @@ body{font-family:"Manrope",sans-serif;color:var(--text);background:var(--bg);lin
 .main-title{font-family:"Unbounded",sans-serif;font-size:0.88rem;flex:1}
 .main-content{flex:1;overflow-y:auto;padding:16px;-webkit-overflow-scrolling:touch}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px}
-.card h2{font-size:0.85rem;margin-bottom:8px;font-family:"Unbounded",sans-serif;display:flex;align-items:center;gap:8px}
-.empty-state{color:#999;font-size:0.85rem;padding:20px 0;text-align:center}
+.card h2{font-size:0.85rem;margin-bottom:8px;font-family:"Unbounded",sans-serif;display:flex;align-items:center;gap:8px}.empty-state{color:#999;font-size:0.85rem;padding:20px 0;text-align:center}
 .card-actions{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap}
 .card-actions button{padding:5px 10px;border:1px solid var(--border);border-radius:6px;background:var(--surface);cursor:pointer;font-family:inherit;font-size:0.72rem;color:#999}
 .card-actions button:hover{background:var(--bg);color:#111}
-.card-actions .btn-add{background:#111;color:#fff;border-color:#111}
-.card-actions .btn-add:hover{background:#333}
 .acc-group{border:1px solid var(--border);border-radius:8px;margin-bottom:6px;overflow:hidden}
 .acc-group-header{display:flex;align-items:center;padding:9px 12px;cursor:pointer;gap:8px;background:var(--surface)}
 .acc-group-header:hover{background:#f9f9f9}
@@ -102,19 +99,8 @@ body{font-family:"Manrope",sans-serif;color:var(--text);background:var(--bg);lin
 #toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:8px 16px;border-radius:8px;font-size:0.8rem;z-index:300;opacity:0;transition:opacity 0.3s;pointer-events:none}
 .user-name{font-weight:600}
 .profile-badge{display:flex;align-items:center;gap:4px;font-size:0.72rem;color:#999}
-@media(max-width:768px){
-  .sidebar{position:fixed;top:0;left:-240px;height:100%;width:240px;transition:left 0.25s ease;z-index:100}
-  .sidebar.open{left:0;box-shadow:4px 0 20px rgba(0,0,0,0.15)}
-  .burger{display:block}
-  .main-content{padding:12px}
-  .dash-grid{grid-template-columns:1fr 1fr}
-}
-@media(max-width:420px){
-  .dash-grid{grid-template-columns:1fr}
-  .main-content{padding:10px}
-  .acc-item-header{padding-left:14px}
-  .detail-label{min-width:70px}
-}
+@media(max-width:768px){.sidebar{position:fixed;top:0;left:-240px;height:100%;width:240px;transition:left 0.25s ease;z-index:100}.sidebar.open{left:0;box-shadow:4px 0 20px rgba(0,0,0,0.15)}.burger{display:block}.main-content{padding:12px}.dash-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:420px){.dash-grid{grid-template-columns:1fr}.main-content{padding:10px}.acc-item-header{padding-left:14px}.detail-label{min-width:70px}}
 </style>
 </head>
 <body>
@@ -127,7 +113,7 @@ body{font-family:"Manrope",sans-serif;color:var(--text);background:var(--bg);lin
 </div></div>
 <div class="admin" id="adminPanel">
 <nav class="sidebar" id="sidebar"><div class="sidebar-header"><h1>MM Studio</h1><p>Админ-панель</p></div><div class="sidebar-nav"><a class="nav-item active" href="index.html"><span class="material-icons">home</span><span class="nav-item-text">Главная</span></a><div class="nav-section"><div class="nav-section-title">Бизнес</div><a class="nav-item" href="plan.html"><span class="material-icons">business_center</span><span class="nav-item-text">План</span></a><a class="nav-item" href="prices.html"><span class="material-icons">business_center</span><span class="nav-item-text">Цены</span></a><a class="nav-item" href="analysis.html"><span class="material-icons">business_center</span><span class="nav-item-text">Оценка</span></a><a class="nav-item" href="proposals.html"><span class="material-icons">business_center</span><span class="nav-item-text">Идеи</span></a></div><div class="nav-section"><div class="nav-section-title">Мастерская</div><a class="nav-item" href="inventory.html"><span class="material-icons">build</span><span class="nav-item-text">Инструменты</span></a><a class="nav-item" href="tech.html"><span class="material-icons">build</span><span class="nav-item-text">Технологии</span></a><a class="nav-item" href="machines.html"><span class="material-icons">build</span><span class="nav-item-text">Станки</span></a><a class="nav-item" href="materials.html"><span class="material-icons">build</span><span class="nav-item-text">Материалы</span></a></div><div class="nav-section"><div class="nav-section-title">Цифровое</div><a class="nav-item" href="print3d.html"><span class="material-icons">memory</span><span class="nav-item-text">3D печать</span></a><a class="nav-item" href="marketing.html"><span class="material-icons">memory</span><span class="nav-item-text">Маркетинг</span></a></div></div><div class="sidebar-footer"><button onclick="expandAll()">+</button><button onclick="collapseAll()">-</button><button onclick="logout()">Выйти</button></div></nav>
-<div class="main"><div class="main-header"><button class="burger" onclick="toggleSidebar()">&#9776;</button><div class="main-title" id="mainTitle">Главная</div><div class="profile-badge"><span class="material-icons" style="font-size:14px">person</span><span class="user-name"></span></div></div><div class="main-content"><div class="dash-welcome"><h2>Добро пожаловать, <span class="user-name"></span>!</h2><p>MM Studio — Админ-панель. Все данные из Excel.</p></div><div class="search-wrap"><input type="text" id="searchInput" placeholder="Найти в любом разделе..." oninput="doSearch(this.value)"><div id="searchResults" class="search-results"></div></div><div class="dash-section"><div class="dash-section-title">Бизнес</div><div class="dash-grid"><a class="dash-card" href="plan.html"><div class="dash-card-icon"><span class="material-icons">business_center</span></div><div class="dash-card-title">План</div></a><a class="dash-card" href="prices.html"><div class="dash-card-icon"><span class="material-icons">business_center</span></div><div class="dash-card-title">Цены</div></a><a class="dash-card" href="analysis.html"><div class="dash-card-icon"><span class="material-icons">business_center</span></div><div class="dash-card-title">Оценка</div></a><a class="dash-card" href="proposals.html"><div class="dash-card-icon"><span class="material-icons">business_center</span></div><div class="dash-card-title">Идеи</div></a></div></div><div class="dash-section"><div class="dash-section-title">Мастерская</div><div class="dash-grid"><a class="dash-card" href="inventory.html"><div class="dash-card-icon"><span class="material-icons">build</span></div><div class="dash-card-title">Инструменты</div></a><a class="dash-card" href="tech.html"><div class="dash-card-icon"><span class="material-icons">build</span></div><div class="dash-card-title">Технологии</div></a><a class="dash-card" href="machines.html"><div class="dash-card-icon"><span class="material-icons">build</span></div><div class="dash-card-title">Станки</div></a><a class="dash-card" href="materials.html"><div class="dash-card-icon"><span class="material-icons">build</span></div><div class="dash-card-title">Материалы</div></a></div></div><div class="dash-section"><div class="dash-section-title">Цифровое</div><div class="dash-grid"><a class="dash-card" href="print3d.html"><div class="dash-card-icon"><span class="material-icons">memory</span></div><div class="dash-card-title">3D печать</div></a><a class="dash-card" href="marketing.html"><div class="dash-card-icon"><span class="material-icons">memory</span></div><div class="dash-card-title">Маркетинг</div></a></div></div><div class="card"><h2>Быстрые ссылки</h2><div class="quick-links"><a class="quick-link" href="../index.html" target="_blank"><span class="material-icons">home</span> Сайт</a><a class="quick-link" href="../prices.html" target="_blank"><span class="material-icons">attach_money</span> Прайс на сайте</a><a class="quick-link" href="../contact.html" target="_blank"><span class="material-icons">mail</span> Контакты</a></div></div><div class="card"><h2>Статистика</h2><div class="dash-grid"><div class="dash-card" style="cursor:default"><div class="dash-card-icon"><span class="material-icons">business_center</span></div><div class="dash-card-title" style="font-size:0.75rem">План</div><div style="font-size:0.85rem;font-weight:700">64</div></div><div class="dash-card" style="cursor:default"><div class="dash-card-icon"><span class="material-icons">business_center</span></div><div class="dash-card-title" style="font-size:0.75rem">Цены</div><div style="font-size:0.85rem;font-weight:700">155</div></div><div class="dash-card" style="cursor:default"><div class="dash-card-icon"><span class="material-icons">business_center</span></div><div class="dash-card-title" style="font-size:0.75rem">Оценка</div><div style="font-size:0.85rem;font-weight:700">25</div></div><div class="dash-card" style="cursor:default"><div class="dash-card-icon"><span class="material-icons">business_center</span></div><div class="dash-card-title" style="font-size:0.75rem">Идеи</div><div style="font-size:0.85rem;font-weight:700">60</div></div><div class="dash-card" style="cursor:default"><div class="dash-card-icon"><span class="material-icons">build</span></div><div class="dash-card-title" style="font-size:0.75rem">Инструменты</div><div style="font-size:0.85rem;font-weight:700">176</div></div><div class="dash-card" style="cursor:default"><div class="dash-card-icon"><span class="material-icons">build</span></div><div class="dash-card-title" style="font-size:0.75rem">Технологии</div><div style="font-size:0.85rem;font-weight:700">132</div></div><div class="dash-card" style="cursor:default"><div class="dash-card-icon"><span class="material-icons">build</span></div><div class="dash-card-title" style="font-size:0.75rem">Станки</div><div style="font-size:0.85rem;font-weight:700">87</div></div><div class="dash-card" style="cursor:default"><div class="dash-card-icon"><span class="material-icons">build</span></div><div class="dash-card-title" style="font-size:0.75rem">Материалы</div><div style="font-size:0.85rem;font-weight:700">40</div></div><div class="dash-card" style="cursor:default"><div class="dash-card-icon"><span class="material-icons">memory</span></div><div class="dash-card-title" style="font-size:0.75rem">3D печать</div><div style="font-size:0.85rem;font-weight:700">217</div></div><div class="dash-card" style="cursor:default"><div class="dash-card-icon"><span class="material-icons">memory</span></div><div class="dash-card-title" style="font-size:0.75rem">Маркетинг</div><div style="font-size:0.85rem;font-weight:700">999</div></div></div></div></div></div></div>
+<div class="main"><div class="main-header"><button class="burger" onclick="toggleSidebar()">&#9776;</button><div class="main-title" id="mainTitle">Главная</div><div class="profile-badge"><span class="material-icons" style="font-size:14px">person</span><span class="user-name"></span></div></div><div class="main-content"><div class="dash-welcome"><h2>Добро пожаловать, <span class="user-name"></span>!</h2><p>MM Studio — Админ-панель. Все данные из Excel.</p></div><div class="search-wrap"><input type="text" id="searchInput" placeholder="Найти в любом разделе..." oninput="doSearch(this.value)"><div id="searchResults" class="search-results"></div></div><div class="dash-section"><div class="dash-section-title">Бизнес</div><div class="dash-grid"><a class="dash-card" href="plan.html"><div class="dash-card-icon"><span class="material-icons">business_center</span></div><div class="dash-card-title">План</div></a><a class="dash-card" href="prices.html"><div class="dash-card-icon"><span class="material-icons">business_center</span></div><div class="dash-card-title">Цены</div></a><a class="dash-card" href="analysis.html"><div class="dash-card-icon"><span class="material-icons">business_center</span></div><div class="dash-card-title">Оценка</div></a><a class="dash-card" href="proposals.html"><div class="dash-card-icon"><span class="material-icons">business_center</span></div><div class="dash-card-title">Идеи</div></a></div></div><div class="dash-section"><div class="dash-section-title">Мастерская</div><div class="dash-grid"><a class="dash-card" href="inventory.html"><div class="dash-card-icon"><span class="material-icons">build</span></div><div class="dash-card-title">Инструменты</div></a><a class="dash-card" href="tech.html"><div class="dash-card-icon"><span class="material-icons">build</span></div><div class="dash-card-title">Технологии</div></a><a class="dash-card" href="machines.html"><div class="dash-card-icon"><span class="material-icons">build</span></div><div class="dash-card-title">Станки</div></a><a class="dash-card" href="materials.html"><div class="dash-card-icon"><span class="material-icons">build</span></div><div class="dash-card-title">Материалы</div></a></div></div><div class="dash-section"><div class="dash-section-title">Цифровое</div><div class="dash-grid"><a class="dash-card" href="print3d.html"><div class="dash-card-icon"><span class="material-icons">memory</span></div><div class="dash-card-title">3D печать</div></a><a class="dash-card" href="marketing.html"><div class="dash-card-icon"><span class="material-icons">memory</span></div><div class="dash-card-title">Маркетинг</div></a></div></div><div class="card"><h2>Ссылки</h2><div class="quick-links"><a class="quick-link" href="../index.html" target="_blank"><span class="material-icons">home</span> Сайт</a><a class="quick-link" href="../prices.html" target="_blank"><span class="material-icons">attach_money</span> Прайс на сайте</a><a class="quick-link" href="../contact.html" target="_blank"><span class="material-icons">mail</span> Контакты</a></div></div><div class="card"><h2>Статистика</h2><div class="dash-grid"><div class="dash-card" style="cursor:default"><div class="dash-card-icon"><span class="material-icons">business_center</span></div><div class="dash-card-title" style="font-size:0.75rem">План</div><div style="font-size:0.85rem;font-weight:700">64</div></div><div class="dash-card" style="cursor:default"><div class="dash-card-icon"><span class="material-icons">business_center</span></div><div class="dash-card-title" style="font-size:0.75rem">Цены</div><div style="font-size:0.85rem;font-weight:700">155</div></div><div class="dash-card" style="cursor:default"><div class="dash-card-icon"><span class="material-icons">business_center</span></div><div class="dash-card-title" style="font-size:0.75rem">Оценка</div><div style="font-size:0.85rem;font-weight:700">25</div></div><div class="dash-card" style="cursor:default"><div class="dash-card-icon"><span class="material-icons">business_center</span></div><div class="dash-card-title" style="font-size:0.75rem">Идеи</div><div style="font-size:0.85rem;font-weight:700">60</div></div><div class="dash-card" style="cursor:default"><div class="dash-card-icon"><span class="material-icons">build</span></div><div class="dash-card-title" style="font-size:0.75rem">Инструменты</div><div style="font-size:0.85rem;font-weight:700">176</div></div><div class="dash-card" style="cursor:default"><div class="dash-card-icon"><span class="material-icons">build</span></div><div class="dash-card-title" style="font-size:0.75rem">Технологии</div><div style="font-size:0.85rem;font-weight:700">132</div></div><div class="dash-card" style="cursor:default"><div class="dash-card-icon"><span class="material-icons">build</span></div><div class="dash-card-title" style="font-size:0.75rem">Станки</div><div style="font-size:0.85rem;font-weight:700">87</div></div><div class="dash-card" style="cursor:default"><div class="dash-card-icon"><span class="material-icons">build</span></div><div class="dash-card-title" style="font-size:0.75rem">Материалы</div><div style="font-size:0.85rem;font-weight:700">40</div></div><div class="dash-card" style="cursor:default"><div class="dash-card-icon"><span class="material-icons">memory</span></div><div class="dash-card-title" style="font-size:0.75rem">3D печать</div><div style="font-size:0.85rem;font-weight:700">217</div></div><div class="dash-card" style="cursor:default"><div class="dash-card-icon"><span class="material-icons">memory</span></div><div class="dash-card-title" style="font-size:0.75rem">Маркетинг</div><div style="font-size:0.85rem;font-weight:700">999</div></div></div></div></div></div></div>
 <div id="toast"></div>
 <script src="search_index.js"></script>
 <script>
@@ -142,112 +128,67 @@ function login(){
     localStorage.setItem("admin_auth","1");
     localStorage.setItem("admin_user",u);
     showUser();
-  } else {
-    document.getElementById("loginError").style.display="block";
-  }
+  }else{document.getElementById("loginError").style.display="block";}
 }
-function logout(){
-  localStorage.removeItem("admin_auth");localStorage.removeItem("admin_user");
-  window.location.href="index.html";
-}
-function showUser(){
-  var u=localStorage.getItem("admin_user");
-  var els=document.querySelectorAll(".user-name");
-  for(var i=0;i<els.length;i++){if(u)els[i].textContent=u;}
-}
+function logout(){localStorage.removeItem("admin_auth");localStorage.removeItem("admin_user");window.location.href="index.html";}
+function showUser(){var u=localStorage.getItem("admin_user");document.querySelectorAll(".user-name").forEach(function(e){if(u)e.textContent=u;});}
 function toggleAcc(el){el.parentElement.classList.toggle("open");}
 function toggleItem(el){el.parentElement.classList.toggle("open");}
-
 function copyText(el){
   var t=el.textContent||el.innerText;
-  (navigator.clipboard||{}).writeText?navigator.clipboard.writeText(t).then(function(){
-    toast(t.substring(0,30));
-  }):function(){
-    var r=document.createRange();r.selectNode(el);
-    window.getSelection().removeAllRanges();window.getSelection().addRange(r);
-    document.execCommand("copy");toast(t.substring(0,30));
-  }();
+  if(navigator.clipboard){navigator.clipboard.writeText(t).then(function(){toast(t.substring(0,30));});}else{
+    var r=document.createRange();r.selectNode(el);window.getSelection().removeAllRanges();window.getSelection().addRange(r);document.execCommand("copy");toast(t.substring(0,30));
+  }
 }
-function toast(t){
-  var tip=document.getElementById("toast");
-  if(!tip){tip=document.createElement("div");tip.id="toast";document.body.appendChild(tip);}
-  tip.textContent="Скопировано: "+t;tip.style.opacity="1";
-  setTimeout(function(){tip.style.opacity="0"},1500);
-}
-function expandAll(){document.querySelectorAll(".acc-group").forEach(function(g){g.classList.add("open")});}
-function collapseAll(){document.querySelectorAll(".acc-group, .acc-item").forEach(function(e){e.classList.remove("open")});}
+function toast(t){var tip=document.getElementById("toast");tip.textContent="Скопировано: "+t;tip.style.opacity="1";setTimeout(function(){tip.style.opacity="0";},1500);}
+function expandAll(){document.querySelectorAll(".acc-group").forEach(function(g){g.classList.add("open");});}
+function collapseAll(){document.querySelectorAll(".acc-group, .acc-item").forEach(function(e){e.classList.remove("open");});}
 function toggleSidebar(){document.getElementById("sidebar").classList.toggle("open");}
-
 function doSearch(q){
   var r=document.getElementById("searchResults");
   if(!q||q.length<2){if(r)r.style.display="none";return;}
   var lower=q.toLowerCase();var found=[];
   for(var i=0;i<SEARCH_DATA.length&&found.length<20;i++){
     var it=SEARCH_DATA[i];
-    if(it[1].indexOf(lower)!==-1||it[2].toLowerCase().indexOf(lower)!==-1) found.push(it);
+    if(it[1].indexOf(lower)!==-1||it[2].toLowerCase().indexOf(lower)!==-1)found.push(it);
   }
   if(!r)return;
   if(found.length===0){r.innerHTML='<div class="search-result"><span class="sr-text">Ничего не найдено</span></div>';r.style.display="block";return;}
   var html="";
   for(var j=0;j<found.length;j++){
-    var f=found[j];
-    var t=f[2].replace(new RegExp("("+q.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+")","gi"),"<mark>$1</mark>");
+    var f=found[j];var qe=q.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+    var t=f[2].replace(new RegExp("("+qe+")","gi"),"<mark>$1</mark>");
     html+='<a class="search-result" href="'+f[0]+'"><span class="sr-tab">'+f[3]+'</span><span class="sr-text">'+t+'</span></a>';
   }
   r.innerHTML=html;r.style.display="block";
 }
-
 document.addEventListener("click",function(e){
   var sr=document.getElementById("searchResults");var si=document.getElementById("searchInput");
   if(sr&&si&&!sr.contains(e.target)&&e.target!==si&&!si.contains(e.target))sr.style.display="none";
 });
-
-function getCustomItems(section){
-  try{return JSON.parse(localStorage.getItem("mm_"+section))||[]}catch(e){return []}
-}
-function saveCustomItems(section,items){
-  localStorage.setItem("mm_"+section,JSON.stringify(items));
-}
-function getDeletedIds(section){
-  try{return JSON.parse(localStorage.getItem("mm_del_"+section))||[]}catch(e){return []}
-}
-function addDeletedId(section,idx){
-  var dels=getDeletedIds(section);
-  if(dels.indexOf(idx)===-1){dels.push(idx);localStorage.setItem("mm_del_"+section,JSON.stringify(dels));}
-}
 function deleteItem(section,idx){
-  if(confirm("Удалить эту запись?")){
-    addDeletedId(section,idx);
-    var el=document.querySelector('.acc-item[data-section="'+section+'"][data-idx="'+idx+'"]');
-    if(el)el.remove();
-    toast("Удалено");
+  if(confirm("Удалить запись?")){
+    var dels=JSON.parse(localStorage.getItem("mm_del_"+section)||"[]");
+    if(dels.indexOf(idx)===-1){dels.push(idx);localStorage.setItem("mm_del_"+section,JSON.stringify(dels));}
     location.reload();
   }
 }
 function editItem(section,idx){
-  var items=getCustomItems(section);
-  var existing=null;
-  for(var i=0;i<items.length;i++){if(items[i]._idx===idx){existing=items[i];break;}}
-  var title=prompt("Новое название:",existing?existing._title:"");
+  var title=prompt("Новое название:");
   if(title&&title.trim()){
-    if(existing){existing._title=title.trim();}
-    else{items.push({_idx:idx,_title:title.trim()});}
-    saveCustomItems(section,items);
+    var edits=JSON.parse(localStorage.getItem("mm_edit_"+section)||"{}");
+    edits[idx]=title.trim();
+    localStorage.setItem("mm_edit_"+section,JSON.stringify(edits));
     location.reload();
   }
 }
-function showAddForm(section){
-  var fields=document.querySelector("#section-"+section+" .add-fields");
-  if(fields)fields.style.display=fields.style.display==="none"?"block":"none";
-}
-
 if(localStorage.getItem("admin_auth")==="1"){
   document.getElementById("loginScreen").style.display="none";
   document.getElementById("adminPanel").style.display="flex";
   showUser();
 }
-document.getElementById("passwordInput").addEventListener("keydown",function(e){if(e.key==="Enter")login()});
-document.getElementById("usernameInput").addEventListener("keydown",function(e){if(e.key==="Enter")login()});
+document.getElementById("passwordInput").addEventListener("keydown",function(e){if(e.key==="Enter")login();});
+document.getElementById("usernameInput").addEventListener("keydown",function(e){if(e.key==="Enter")login();})
 </script>
 </body>
 </html>
