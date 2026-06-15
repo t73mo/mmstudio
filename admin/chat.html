@@ -30,7 +30,8 @@ if(c)document.documentElement.className=c;
 .login-box button{width:100%;padding:12px;background:var(--text);color:var(--bg);border:none;border-radius:8px;font-size:1rem;font-weight:600;cursor:pointer;font-family:inherit}
 .login-box button:hover{opacity:.85}
 .login-error{color:#c00;font-size:0.8rem;margin-top:6px;display:none}
-#chatApp{display:none;flex:1;flex-direction:column;background:var(--bg);overflow:hidden;min-width:0;min-height:0;height:100%}
+html,body{height:100%;height:100dvh;overflow:hidden;position:fixed;width:100%}
+#chatApp{display:none;flex:1;flex-direction:column;background:var(--bg);overflow:hidden;min-width:0;min-height:0}
 .chat-topbar{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0}
 .chat-topbar .burger{background:none;border:none;font-size:1.3rem;cursor:pointer;padding:8px;color:var(--text);border-radius:6px;display:none;line-height:1}
 .chat-topbar .burger:active{background:var(--hover)}
@@ -51,7 +52,7 @@ if(c)document.documentElement.className=c;
 .msg-check{font-size:0.62rem;line-height:1;opacity:.45}
 .msg-check.msg-read{opacity:.75}
 .msg-edited{font-size:0.56rem;opacity:.45;font-style:italic}
-.chat-input-bar{display:flex;align-items:flex-end;gap:8px;padding:10px 16px;border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;padding-bottom:max(10px,env(safe-area-inset-bottom,10px));position:relative;z-index:10}
+.chat-input-bar{display:flex;align-items:flex-end;gap:8px;padding:10px 16px;border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;padding-bottom:max(10px,env(safe-area-inset-bottom,10px))}
 .chat-attach{background:none;border:none;font-size:1.3rem;cursor:pointer;padding:8px;color:var(--muted);border-radius:8px;flex-shrink:0;line-height:1}
 .chat-attach:active{background:var(--hover)}
 .chat-input-wrap{flex:1;display:flex;align-items:center;background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:4px 4px 4px 14px}
@@ -72,6 +73,9 @@ if(c)document.documentElement.className=c;
 .edit-bar button:active{background:var(--border)}
 .edit-bar .edit-cancel{color:#c00}
 @media(min-width:769px){
+  .main{flex-direction:row;min-height:0}
+  .chat-contacts{min-height:0}
+  #chatApp{min-height:0}
   .chat-topbar .burger{display:none}
   .chat-messages{padding:16px 24px}
   .chat-msg{max-width:55%}
@@ -167,7 +171,8 @@ function doLogin(){
     try{if(!firebase.apps.length)firebase.initializeApp(CFG);}catch(e){}
     var checkDb=firebase.database();
     checkDb.ref("settings/"+u.toLowerCase()+"/password").once("value",function(snap){
-      if(snap.val()===p){doLoginFinal(u);}
+      if(snap.val()===p)doLoginFinal(u);
+      else document.getElementById("loginError").style.display="block";
     });
     return;
   }
@@ -276,8 +281,8 @@ function setupPresence(){
 function updateContactDot(uid,presence){
   var dot=document.getElementById("c-dot-"+uid);
   if(!dot)return;
-  if(presence&&presence.online){dot.className="online-dot";dot.style.background="#4caf50";}
-  else{dot.className="online-dot";dot.style.background="#888";}
+  if(presence&&presence.online){dot.style.background="#4caf50";}
+  else{dot.style.background="#888";}
 }
 
 function loadContacts(){
@@ -286,7 +291,7 @@ function loadContacts(){
   var html='';
   for(var i=0;i<users.length;i++){
     var uid=users[i];var name=NAMES[uid];
-    html+='<div class="chat-contact-item active" onclick="window.location.href=\'chat.html\'">';
+    html+='<div class="chat-contact-item active">';
     html+='<div class="chat-contact-avatar"><span class="online-dot" id="c-dot-'+uid+'" style="background:#888"></span>'+name.charAt(0)+'</div>';
     html+='<div class="chat-contact-info"><div class="chat-contact-name">'+name+'</div><div class="chat-contact-last" id="c-last-'+uid+'">Нет сообщений</div></div>';
     html+='<div class="chat-contact-time" id="c-time-'+uid+'"></div>';

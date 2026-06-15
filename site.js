@@ -48,10 +48,13 @@
     var scheduleEls=document.querySelectorAll("[data-cms-contact='schedule']");
     scheduleEls.forEach(function(el){el.textContent=c.schedule||"";});
     var tgLinks=document.querySelectorAll("[data-cms-social='telegram']");
+    if(!tgLinks.length) tgLinks=document.querySelectorAll('.footer-social a[aria-label="Telegram"]');
     tgLinks.forEach(function(el){if(c.telegram&&c.telegram!=="#")el.href=c.telegram;});
     var waLinks=document.querySelectorAll("[data-cms-social='whatsapp']");
+    if(!waLinks.length) waLinks=document.querySelectorAll('.footer-social a[aria-label="WhatsApp"]');
     waLinks.forEach(function(el){if(c.whatsapp&&c.whatsapp!=="#")el.href=c.whatsapp;});
     var igLinks=document.querySelectorAll("[data-cms-social='instagram']");
+    if(!igLinks.length) igLinks=document.querySelectorAll('.footer-social a[aria-label="Instagram"]');
     igLinks.forEach(function(el){if(c.instagram&&c.instagram!=="#")el.href=c.instagram;});
   }
 
