@@ -20,7 +20,7 @@ if(localStorage.getItem("mm_theme")==="dark"||(c&&!localStorage.getItem("mm_them
 if(c)document.documentElement.className=c;
 </script>
 <style>
-.auth-ok #loginScreen{display:none!important}.auth-ok #chatApp{display:flex!important}
+.auth-ok #loginScreen{display:none!important}.auth-ok #adminPanel{display:flex!important}.auth-ok #chatApp{display:flex!important}
 .login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
 .login-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:36px;width:100%;max-width:320px;text-align:center}
 .login-box h1{font-family:"Unbounded",sans-serif;font-size:1.1rem;margin-bottom:6px}
@@ -30,7 +30,7 @@ if(c)document.documentElement.className=c;
 .login-box button{width:100%;padding:12px;background:var(--text);color:var(--bg);border:none;border-radius:8px;font-size:1rem;font-weight:600;cursor:pointer;font-family:inherit}
 .login-box button:hover{opacity:.85}
 .login-error{color:#c00;font-size:0.8rem;margin-top:6px;display:none}
-#chatApp{display:none;height:100vh;height:100dvh;flex-direction:column;background:var(--bg)}
+#chatApp{display:none;flex:1;flex-direction:column;background:var(--bg);overflow:hidden;min-width:0}
 .chat-topbar{display:flex;align-items:center;gap:8px;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0}
 .chat-topbar .back-btn{background:none;border:none;font-size:1.2rem;cursor:pointer;padding:8px;color:var(--text);border-radius:6px}
 .chat-topbar .back-btn:active{background:var(--hover)}
@@ -72,11 +72,12 @@ if(c)document.documentElement.className=c;
 .edit-bar button:active{background:var(--border)}
 .edit-bar .edit-cancel{color:#c00}
 @media(min-width:769px){
-  .chat-messages{padding:24px 32px;max-width:800px;margin:0 auto;width:100%}
-  .chat-input-bar{padding:12px 32px;max-width:800px;margin:0 auto;width:100%}
+  .chat-messages{padding:24px 32px;max-width:100%;width:100%}
+  .chat-input-bar{padding:12px 32px;max-width:100%;width:100%}
   .chat-msg{max-width:55%}
 }
 @media(max-width:768px){
+  .chat-topbar .burger{display:block}
   .chat-attach{font-size:1.5rem;padding:10px}
   .chat-send{width:40px;height:40px;font-size:1.1rem}
   .chat-input-wrap{padding:6px 6px 6px 12px}
@@ -95,9 +96,14 @@ if(c)document.documentElement.className=c;
 <div class="login-error" id="loginError">Неверный логин или пароль</div>
 </div></div>
 
+<div class="admin" id="adminPanel">
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+<nav class="sidebar" id="sidebar"><div class="sidebar-header"><h1>MM Studio</h1><p>Админ-панель</p></div><div class="sidebar-nav"><a class="nav-item" href="index.html"><span class="material-icons">home</span><span class="nav-item-text">Главная</span></a><div class="nav-section"><div class="nav-section-title">Бизнес</div><a class="nav-item" href="plan.html"><span class="material-icons">business_center</span><span class="nav-item-text">План</span></a><a class="nav-item" href="prices.html"><span class="material-icons">business_center</span><span class="nav-item-text">Цены</span></a><a class="nav-item" href="proposals.html"><span class="material-icons">business_center</span><span class="nav-item-text">Идеи</span></a></div><div class="nav-section"><div class="nav-section-title">Мастерская</div><a class="nav-item" href="inventory.html"><span class="material-icons">build</span><span class="nav-item-text">Инструменты</span></a><a class="nav-item" href="machines.html"><span class="material-icons">build</span><span class="nav-item-text">Станки</span></a><a class="nav-item" href="materials.html"><span class="material-icons">build</span><span class="nav-item-text">Материалы</span></a></div><div class="nav-section"><div class="nav-section-title">Цифровое</div><a class="nav-item" href="print3d.html"><span class="material-icons">memory</span><span class="nav-item-text">3D печать</span></a><a class="nav-item" href="marketing.html"><span class="material-icons">memory</span><span class="nav-item-text">Маркетинг</span></a><a class="nav-item active" href="chat.html"><span class="material-icons">chat</span><span class="nav-item-text">Чат</span></a></div></div><div class="theme-toggle" onclick="toggleTheme()"><span class="material-icons" id="themeIcon">dark_mode</span><span id="themeLabel">Тёмная тема</span></div><div class="sidebar-footer"><button onclick="logout()">Выйти</button></div></nav>
+
+<div class="main">
 <div id="chatApp">
   <div class="chat-topbar">
-    <button class="back-btn" onclick="window.location.href='index.html'" title="Назад">&#8592;</button>
+    <button class="burger" onclick="toggleSidebar()">&#9776;</button>
     <div class="chat-topbar-title">Чат</div>
     <div class="chat-topbar-dot" id="chatDot"></div>
   </div>
@@ -114,6 +120,8 @@ if(c)document.documentElement.className=c;
     </div>
   </div>
 </div>
+</div>
+</div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
@@ -124,11 +132,17 @@ var CFG={apiKey:"AIzaSyD3XHJ3xdeJC_ALeIK4nOf1EASO39W3Gh0",authDomain:"mmstudio-8
 var VAPID_KEY="BJ_vMZzwlDnwXxOA84Vg8OmmK-Bjhm7BKGCMtlJUwr-Yb7YGEqqEPje3oj0vezA89LfRdmRPeNiN0P3-UnM7RSQ";
 var db,messaging,myId,myName,previewData=null,editingMsgId=null,lastNotifId=null;
 
+function toggleSidebar(){var s=document.getElementById("sidebar"),o=document.getElementById("sidebarOverlay");s.classList.toggle("open");o.classList.toggle("open");}
+function closeSidebar(){document.getElementById("sidebar").classList.remove("open");document.getElementById("sidebarOverlay").classList.remove("open");}
+function toggleTheme(){var d=document.documentElement;d.classList.toggle("dark");localStorage.setItem("mm_theme",d.classList.contains("dark")?"dark":"light");}
+function logout(){localStorage.removeItem("admin_auth");localStorage.removeItem("admin_user");window.location.reload();}
+
 function doLogin(){
   var u=document.getElementById("usernameInput").value;
   var p=document.getElementById("passwordInput").value;
   if(USERS[u]&&USERS[u]===p){
     document.getElementById("loginScreen").style.display="none";
+    document.getElementById("adminPanel").style.display="flex";
     document.getElementById("chatApp").style.display="flex";
     localStorage.setItem("admin_auth","1");
     localStorage.setItem("admin_user",u);
@@ -353,6 +367,7 @@ function fmtTime(ts){return new Date(ts).toLocaleTimeString("ru-RU",{hour:"2-dig
 
 if(localStorage.getItem("admin_auth")==="1"){
   var ls=document.getElementById("loginScreen");if(ls)ls.style.display="none";
+  var ap=document.getElementById("adminPanel");if(ap)ap.style.display="flex";
   var ca=document.getElementById("chatApp");if(ca)ca.style.display="flex";
   myId=(localStorage.getItem("admin_user")||"").toLowerCase();
   myName=NAMES[myId]||localStorage.getItem("admin_user")||"";
