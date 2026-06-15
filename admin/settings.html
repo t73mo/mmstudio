@@ -83,7 +83,7 @@ var NAMES={telman:"Тельман",anastasia:"Анастасия"};
 function getMyId(){return(localStorage.getItem("admin_user")||"").toLowerCase();}
 function initSettings(){
   var myId=getMyId();if(!myId)return;
-  try{if(!firebase.apps.length)firebase.initializeApp(SET_CFG);sDb=firebase.database();}catch(e){return;}
+  try{if(!firebase.apps.length)firebase.initializeApp(SET_CFG);sDb=firebase.database();}catch(e){sDb=null;return;}
   sDb.ref("settings/"+myId).on("value",function(snap){
     var v=snap.val()||{};
     if(v.displayName){
@@ -114,7 +114,8 @@ function handleAvatar(e){
   reader.readAsDataURL(file);
 }
 function saveSettings(){
-  var myId=getMyId();if(!myId||!sDb)return;
+  var myId=getMyId();if(!myId)return;
+  if(!sDb){try{if(!firebase.apps.length)firebase.initializeApp(SET_CFG);sDb=firebase.database();}catch(e){alert("Ошибка подключения");return;}}
   var name=document.getElementById("settingsName").value.trim();
   var oldPass=document.getElementById("settingsPassOld").value;
   var newPass=document.getElementById("settingsPass").value;
@@ -135,13 +136,17 @@ function saveSettings(){
         sDb.ref("settings/"+myId+"/password").set(newPass).then(showSaved);
       }else alert("Неверный текущий пароль");
     });
-  });
+  }).catch(function(e){alert("Ошибка сохранения: "+e.message);});
 }
 function showSaved(){
   var msg=document.getElementById("settingsMsg");
   msg.style.display="block";
   setTimeout(function(){msg.style.display="none";},2000);
 }
-if(localStorage.getItem("admin_auth")==="1")initSettings();
+if(localStorage.getItem("admin_auth")==="1"){
+  document.getElementById("loginScreen").style.display="none";
+  document.getElementById("adminPanel").style.display="flex";
+  initSettings();
+}
 </script>
 </body></html>
