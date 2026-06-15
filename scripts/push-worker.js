@@ -26,8 +26,8 @@ async function processPushQueue() {
       await admin.messaging().send({
         token: item.token,
         notification: {
-          title: item.title || 'MM Studio',
-          body: item.body || '',
+          title: 'MM Studio',
+          body: item.title ? item.title + ': ' + (item.body || '') : (item.body || ''),
         },
         webpush: {
           fcm_options: { link: item.url || 'https://t73mo.github.io/mmstudio/admin/chat.html' }
