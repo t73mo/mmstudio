@@ -64,8 +64,11 @@ if(c)document.documentElement.className=c;
   <input type="file" id="settingsFileInput" accept="image/*" onchange="handleAvatar(event)">
 </div>
 <div class="settings-field"><label>Отображаемое имя</label><input type="text" id="settingsName" placeholder="Ваше имя"></div>
-<div class="settings-field"><label>Новый пароль</label><input type="password" id="settingsPass" placeholder="Оставьте пустым чтобы не менять"></div>
-<div class="settings-field"><label>Текущий пароль (для подтверждения)</label><input type="password" id="settingsPassConfirm" placeholder="Введите текущий пароль"></div>
+<div style="border-top:1px solid var(--border);margin:16px 0;padding-top:16px"><h3 style="font-family:'Unbounded',sans-serif;font-size:0.82rem;margin-bottom:12px">Смена пароля</h3>
+<div class="settings-field"><label>Текущий пароль</label><input type="password" id="settingsPassOld" placeholder="Введите текущий пароль"></div>
+<div class="settings-field"><label>Новый пароль</label><input type="password" id="settingsPass" placeholder="Введите новый пароль"></div>
+<div class="settings-field"><label>Подтверждение нового пароля</label><input type="password" id="settingsPassConfirm" placeholder="Повторите новый пароль"></div>
+</div>
 <button class="settings-save" onclick="saveSettings()">Сохранить</button>
 <div class="settings-msg" id="settingsMsg">Настройки сохранены!</div>
 </div>
@@ -113,28 +116,26 @@ function handleAvatar(e){
 function saveSettings(){
   var myId=getMyId();if(!myId||!sDb)return;
   var name=document.getElementById("settingsName").value.trim();
+  var oldPass=document.getElementById("settingsPassOld").value;
   var newPass=document.getElementById("settingsPass").value;
   var confirmPass=document.getElementById("settingsPassConfirm").value;
   var updates={};
   if(name)updates.displayName=name;
   var av=document.getElementById("settingsAvatar");
   if(av.dataset.photo)updates.photo=av.dataset.photo;
-  if(newPass){
-    if(!confirmPass){alert("Введите текущий пароль для подтверждения");return;}
-    var curPass=USERS[Object.keys(USERS).find(function(k){return k.toLowerCase()===myId;})]||"";
-    if(confirmPass!==curPass){
-      sDb.ref("settings/"+myId+"/password").once("value",function(snap){
-        var storedPass=snap.val();
-        if(confirmPass===storedPass||confirmPass===curPass){
-          sDb.ref("settings/"+myId+"/password").set(newPass);
-          showSaved();
-        }else alert("Неверный текущий пароль");
-      });
-      return;
-    }
-    updates.password=newPass;
-  }
-  sDb.ref("settings/"+myId).update(updates).then(showSaved);
+  sDb.ref("settings/"+myId).update(updates).then(function(){
+    if(!newPass){showSaved();return;}
+    if(!oldPass){alert("Введите текущий пароль");return;}
+    if(newPass!==confirmPass){alert("Пароли не совпадают");return;}
+    var userId=null;for(var k in USERS){if(k.toLowerCase()===myId){userId=k;break;}}
+    var hardcodedPass=userId?USERS[userId]:"";
+    sDb.ref("settings/"+myId+"/password").once("value",function(snap){
+      var storedPass=snap.val()||"";
+      if(oldPass===hardcodedPass||oldPass===storedPass){
+        sDb.ref("settings/"+myId+"/password").set(newPass).then(showSaved);
+      }else alert("Неверный текущий пароль");
+    });
+  });
 }
 function showSaved(){
   var msg=document.getElementById("settingsMsg");
