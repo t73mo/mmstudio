@@ -51,16 +51,21 @@ html,body{height:100dvh;height:100%;overflow:hidden;position:fixed;width:100%}
 .ms-nav-group.open>.ms-nav-group-header .ms-arrow{transform:rotate(90deg)}
 .ms-sidebar-footer{padding:10px 14px;border-top:1px solid var(--border)}
 
-.ms-contacts{width:320px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden}
-.ms-contacts-header{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0}
-.ms-contacts-header h2{font-family:"Unbounded",sans-serif;font-size:0.88rem;flex:1}
+.ms-contacts{width:340px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden}
+.ms-contacts-header{padding:12px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
+.ms-contacts-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.ms-contacts-top h2{font-family:"Unbounded",sans-serif;font-size:0.88rem;flex:1}
 .ms-search{position:relative}
 .ms-search input{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-size:0.82rem;font-family:inherit;background:var(--bg);color:var(--text);outline:none}
 .ms-search input:focus{border-color:var(--text)}
+.ms-filters{display:flex;gap:4px;margin-top:8px}
+.ms-filter-btn{padding:5px 12px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--muted);font-size:0.75rem;font-family:inherit;cursor:pointer;transition:all .15s}
+.ms-filter-btn.active{background:var(--text);color:var(--bg);border-color:var(--text)}
 .ms-contacts-list{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .ms-contact{display:flex;align-items:center;gap:12px;padding:10px 16px;cursor:pointer;transition:background .15s;border-bottom:1px solid var(--border);text-decoration:none;color:inherit}
 .ms-contact:hover,.ms-contact:active{background:var(--hover)}
 .ms-contact.active{background:var(--hover)}
+.ms-contact.hidden{display:none}
 .ms-contact-avatar{width:46px;height:46px;border-radius:50%;background:var(--text);color:var(--bg);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.05rem;flex-shrink:0;position:relative}
 .ms-contact-avatar .online-dot{position:absolute;bottom:0;right:0;border:2px solid var(--surface);width:10px;height:10px}
 .ms-contact-info{flex:1;min-width:0}
@@ -68,6 +73,7 @@ html,body{height:100dvh;height:100%;overflow:hidden;position:fixed;width:100%}
 .ms-contact-name{font-weight:600;font-size:0.84rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ms-contact-time{font-size:0.66rem;color:var(--muted);flex-shrink:0;margin-left:8px}
 .ms-contact-last{font-size:0.74rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ms-contact-unread{background:#4caf50;color:#fff;font-size:0.6rem;font-weight:700;min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 5px;flex-shrink:0;margin-left:6px}
 
 .ms-chat{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;background:var(--bg)}
 .ms-chat-empty{flex:1;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:0.9rem}
@@ -128,19 +134,13 @@ html,body{height:100dvh;height:100%;overflow:hidden;position:fixed;width:100%}
 .ms-preview .info{flex:1;font-size:0.78rem;color:var(--muted)}
 .ms-preview .remove{background:none;border:none;cursor:pointer;font-size:0.9rem;color:var(--muted);padding:4px}
 
-.ms-filters{width:200px;border-left:1px solid var(--border);background:var(--surface);display:flex;flex-direction:column;flex-shrink:0;padding:16px 0}
-.ms-filters-title{padding:0 16px 12px;font-family:"Unbounded",sans-serif;font-size:0.82rem;font-weight:600;border-bottom:1px solid var(--border);margin-bottom:4px}
-.ms-filter-item{padding:10px 16px;cursor:pointer;font-size:0.82rem;color:var(--text2);transition:background .15s}
-.ms-filter-item:hover,.ms-filter-item:active{background:var(--hover);color:var(--text)}
-.ms-filter-item.active{background:var(--text);color:var(--bg)}
-
 .photo-overlay{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:500;display:none;align-items:center;justify-content:center;flex-direction:column;cursor:pointer}
 .photo-overlay.open{display:flex}
 .photo-overlay img{max-width:90vw;max-height:85vh;object-fit:contain;border-radius:4px}
 .photo-overlay-close{position:absolute;top:16px;right:16px;background:none;border:none;color:#fff;font-size:1.8rem;cursor:pointer;padding:8px;z-index:501}
 #chatFileInput{display:none}
 
-@media(max-width:1024px){.ms-sidebar{display:none}.ms-filters{display:none}}
+@media(max-width:1024px){.ms-sidebar{display:none}}
 @media(max-width:768px){
   .ms-contacts{width:100%;border-right:none}
   .ms-chat{position:absolute;inset:0;z-index:50;transform:translateX(100%);transition:transform .25s ease;background:var(--bg)}
@@ -186,7 +186,6 @@ html,body{height:100dvh;height:100%;overflow:hidden;position:fixed;width:100%}
   <div class="ms-sidebar-nav">
     <a class="ms-nav-item" href="index.html"><span class="material-icons">home</span><span class="ms-nav-item-text">Главная</span></a>
     <a class="ms-nav-item active" href="chat.html"><span class="material-icons">chat</span><span class="ms-nav-item-text">Мессенджер</span></a>
-    <a class="ms-nav-item" href="chats.html"><span class="material-icons">forum</span><span class="ms-nav-item-text">Чаты</span></a>
     <div class="ms-nav-group" id="navDbGroup">
       <div class="ms-nav-group-header" onclick="toggleMsNavGroup('navDbGroup')"><span class="material-icons">storage</span><span class="ms-nav-item-text">База данных</span><span class="ms-arrow">&#9654;</span></div>
       <div class="ms-nav-group-body">
@@ -206,10 +205,17 @@ html,body{height:100dvh;height:100%;overflow:hidden;position:fixed;width:100%}
 
 <div class="ms-contacts" id="msContacts">
   <div class="ms-contacts-header">
-    <h2>Мессенджер</h2>
-  </div>
-  <div class="ms-search" style="padding:0 16px 10px">
-    <input type="text" id="contactSearch" placeholder="Поиск" oninput="filterContacts()">
+    <div class="ms-contacts-top">
+      <h2>Мессенджер</h2>
+    </div>
+    <div class="ms-search">
+      <input type="text" id="contactSearch" placeholder="Поиск" oninput="filterContacts()">
+    </div>
+    <div class="ms-filters">
+      <button class="ms-filter-btn active" onclick="setContactFilter('all',this)">Все</button>
+      <button class="ms-filter-btn" onclick="setContactFilter('unread',this)">Непрочитанные</button>
+      <button class="ms-filter-btn" onclick="setContactFilter('photos',this)">С фото</button>
+    </div>
   </div>
   <div class="ms-contacts-list" id="msContactsList"></div>
 </div>
@@ -250,14 +256,6 @@ html,body{height:100dvh;height:100%;overflow:hidden;position:fixed;width:100%}
     </div>
   </div>
 </div>
-
-<div class="ms-filters" id="msFilters">
-  <div class="ms-filters-title">Фильтры</div>
-  <div class="ms-filter-item active" onclick="setMsgFilter('all',this)">Все сообщения</div>
-  <div class="ms-filter-item" onclick="setMsgFilter('unread',this)">Непрочитанные</div>
-  <div class="ms-filter-item" onclick="setMsgFilter('mine',this)">Мои сообщения</div>
-  <div class="ms-filter-item" onclick="setMsgFilter('photos',this)">С фото</div>
-</div>
 </div>
 
 <script>
@@ -265,7 +263,8 @@ var USERS={"Telman":"Kn0pKa78","Anastasia":"mm2026"};
 var NAMES={telman:"Тельман",anastasia:"Анастасия"};
 var CFG={apiKey:"AIzaSyD3XHJ3xdeJC_ALeIK4nOf1EASO39W3Gh0",authDomain:"mmstudio-86917.firebaseapp.com",databaseURL:"https://mmstudio-86917-default-rtdb.europe-west1.firebasedatabase.app",projectId:"mmstudio-86917",storageBucket:"mmstudio-86917.firebasestorage.app",messagingSenderId:"466384625481",appId:"1:466384625481:web:fb4bb7144d0d329be8c498"};
 var VAPID_KEY="BJ_vMZzwlDnwXxOA84Vg8OmmK-Bjhm7BKGCMtlJUwr-Yb7YGEqqEPje3oj0vezA89LfRdmRPeNiN0P3-UnM7RSQ";
-var db,messaging,myId,myName,activeContact=null,previewData=null,editingMsgId=null,lastNotifId=null,allMsgs=[],currentMsgFilter="all";
+var db,messaging,myId,myName,activeContact=null,previewData=null,editingMsgId=null,lastNotifId=null,allMsgs=[],currentContactFilter="all";
+var contactData={};
 
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 function fmtTime(ts){return new Date(ts).toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"});}
@@ -315,16 +314,40 @@ function initChat(){
   if(Notification&&Notification.permission==="default")Notification.requestPermission();
 }
 
+/* === CONTACTS === */
 function loadContacts(){
   var container=document.getElementById("msContactsList");
   var users=Object.keys(NAMES).filter(function(u){return u!==myId;});
+  for(var i=0;i<users.length;i++){
+    (function(uid){
+      contactData[uid]={msgs:[],unread:0,hasPhotos:false};
+      db.ref("messages").orderByChild("time").on("value",function(snap){
+        var d=contactData[uid];d.msgs=[];d.unread=0;d.hasPhotos=false;
+        snap.forEach(function(ch){
+          var m=ch.val();
+          if(m.user===uid||m.user===myId){
+            d.msgs.push(Object.assign({id:ch.key},m));
+            if(m.user===uid&&!m.read)d.unread++;
+            if(m.image)d.hasPhotos=true;
+          }
+        });
+        renderContact(uid);
+        applyContactFilter();
+      });
+    })(users[i]);
+  }
+  renderContactsList(users);
+}
+
+function renderContactsList(users){
+  var container=document.getElementById("msContactsList");
   var html='';
   for(var i=0;i<users.length;i++){
     var uid=users[i];var name=NAMES[uid];
     html+='<div class="ms-contact" data-uid="'+uid+'" onclick="openChat(\''+uid+'\')">';
     html+='<div class="ms-contact-avatar"><span class="online-dot" id="dot-'+uid+'" style="background:#888"></span>'+name.charAt(0)+'</div>';
     html+='<div class="ms-contact-info"><div class="ms-contact-top"><span class="ms-contact-name">'+name+'</span><span class="ms-contact-time" id="ctime-'+uid+'"></span></div>';
-    html+='<div class="ms-contact-last" id="clast-'+uid+'">Нет сообщений</div></div></div>';
+    html+='<div style="display:flex;align-items:center"><span class="ms-contact-last" id="clast-'+uid+'">Нет сообщений</span><span class="ms-contact-unread" id="cunread-'+uid+'" style="display:none">0</span></div></div></div>';
   }
   container.innerHTML=html;
   for(var j=0;j<users.length;j++){
@@ -334,28 +357,52 @@ function loadContacts(){
         var dot=document.getElementById("dot-"+uid);
         if(dot)dot.style.background=(v&&v.online)?"#4caf50":"#888";
       });
-      db.ref("messages").orderByChild("time").limitToLast(1).on("value",function(snap){
-        var last=null;
-        snap.forEach(function(ch){var m=ch.val();if(m.user===uid||m.user===myId)last=m;});
-        if(last){
-          var lt=document.getElementById("ctime-"+uid);
-          var ll=document.getElementById("clast-"+uid);
-          if(lt)lt.textContent=fmtTime(last.time);
-          if(ll)ll.textContent=(last.user===myId?"Вы: ":"")+((last.text||"Фото").substring(0,40));
-        }
-      });
     })(users[j]);
   }
+}
+
+function renderContact(uid){
+  var d=contactData[uid];if(!d)return;
+  var last=d.msgs.length?d.msgs[d.msgs.length-1]:null;
+  var lt=document.getElementById("ctime-"+uid);
+  var ll=document.getElementById("clast-"+uid);
+  var ub=document.getElementById("cunread-"+uid);
+  if(lt&&last)lt.textContent=fmtTime(last.time);
+  if(ll&&last)ll.textContent=(last.user===myId?"Вы: ":"")+((last.text||"Фото").substring(0,40));
+  if(ub){
+    if(d.unread>0){ub.textContent=d.unread;ub.style.display="flex";}
+    else{ub.style.display="none";}
+  }
+}
+
+function setContactFilter(f,btn){
+  currentContactFilter=f;
+  document.querySelectorAll(".ms-filter-btn").forEach(function(b){b.classList.remove("active");});
+  if(btn)btn.classList.add("active");
+  applyContactFilter();
+}
+
+function applyContactFilter(){
+  document.querySelectorAll(".ms-contact").forEach(function(el){
+    var uid=el.dataset.uid;
+    var d=contactData[uid];
+    var show=true;
+    if(currentContactFilter==="unread"){show=d&&d.unread>0;}
+    else if(currentContactFilter==="photos"){show=d&&d.hasPhotos;}
+    el.classList.toggle("hidden",!show);
+  });
 }
 
 function filterContacts(){
   var q=document.getElementById("contactSearch").value.toLowerCase();
   document.querySelectorAll(".ms-contact").forEach(function(el){
     var name=(el.querySelector(".ms-contact-name")||{}).textContent||"";
-    el.style.display=name.toLowerCase().indexOf(q)>=0?"":"none";
+    if(name.toLowerCase().indexOf(q)<0){el.classList.add("hidden");return;}
   });
+  applyContactFilter();
 }
 
+/* === CHAT === */
 function openChat(uid){
   activeContact=uid;
   var name=NAMES[uid]||uid;
@@ -374,6 +421,7 @@ function openChat(uid){
     else{el.textContent="не в сети";el.className="ms-chat-topbar-status";}
   });
   loadMessages();
+  markContactRead(uid);
   document.getElementById("msChat").classList.add("open");
   document.getElementById("msContacts").classList.add("hidden");
 }
@@ -383,6 +431,16 @@ function goBackContacts(){
   document.getElementById("msContacts").classList.remove("hidden");
 }
 
+function markContactRead(uid){
+  if(!db)return;
+  db.ref("messages").once("value",function(snap){
+    var updates={};
+    snap.forEach(function(ch){var m=ch.val();if(m.user!==uid&&!m.read)updates[ch.key+"/read"]=true;});
+    if(Object.keys(updates).length)db.ref("messages").update(updates);
+  });
+}
+
+/* === MESSAGES === */
 function loadMessages(){
   db.ref("messages").orderByChild("time").on("value",function(snap){
     allMsgs=[];
@@ -417,21 +475,7 @@ function renderMessages(msgs){
   container.scrollTop=container.scrollHeight;
 }
 
-function setMsgFilter(f,el){
-  currentMsgFilter=f;
-  document.querySelectorAll(".ms-filter-item").forEach(function(b){b.classList.remove("active");});
-  if(el)el.classList.add("active");
-  applyMsgFilter();
-}
-
-function applyMsgFilter(){
-  var filtered=allMsgs;
-  if(currentMsgFilter==="unread")filtered=allMsgs.filter(function(m){return m.user!==myId&&!m.read;});
-  else if(currentMsgFilter==="mine")filtered=allMsgs.filter(function(m){return m.user===myId;});
-  else if(currentMsgFilter==="photos")filtered=allMsgs.filter(function(m){return m.image;});
-  renderMessages(filtered);
-}
-
+/* === MSG MENU === */
 var menuMsgId=null,menuMsgUser=null,menuMsgTime=0;
 function setupMsgMenu(){
   document.addEventListener("click",function(e){
@@ -498,6 +542,7 @@ function showToast(t){
   setTimeout(function(){d.remove();},2000);
 }
 
+/* === CHAT SEARCH === */
 function toggleChatSearch(){
   var el=document.getElementById("chatSearch");
   el.classList.toggle("open");
@@ -508,7 +553,7 @@ function toggleChatSearch(){
 function searchMessages(){
   var q=document.getElementById("chatSearchInput").value.toLowerCase();
   var info=document.getElementById("chatSearchInfo");
-  if(!q){applyMsgFilter();info.textContent="";return;}
+  if(!q){renderMessages(allMsgs);info.textContent="";return;}
   var filtered=allMsgs.filter(function(m){return(m.text||"").toLowerCase().indexOf(q)>=0;});
   info.textContent=filtered.length+" найдено";
   renderMessages(filtered);
@@ -517,9 +562,10 @@ function searchMessages(){
 function clearChatSearch(){
   document.getElementById("chatSearchInput").value="";
   document.getElementById("chatSearchInfo").textContent="";
-  applyMsgFilter();
+  renderMessages(allMsgs);
 }
 
+/* === EDIT === */
 function startEdit(msgId){
   db.ref("messages/"+msgId).once("value",function(snap){
     var m=snap.val();if(!m)return;
@@ -536,6 +582,7 @@ function cancelEdit(){
   document.getElementById("editBar").classList.remove("open");
 }
 
+/* === INPUT === */
 function setupInput(){
   var inp=document.getElementById("chatInput");
   var btn=document.getElementById("chatSendBtn");
@@ -589,6 +636,7 @@ function sendMsg(){
   document.getElementById("chatSendBtn").disabled=true;
 }
 
+/* === PUSH === */
 function sendPush(text){
   if(!activeContact)return;
   db.ref("fcmTokens/"+activeContact).once("value",function(snap){
