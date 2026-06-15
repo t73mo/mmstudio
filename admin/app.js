@@ -24,6 +24,7 @@ function copyText(el){
 function toast(t){var d=document.getElementById("toast");d.textContent="\u0421\u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u043d\u043e: "+t;d.style.opacity="1";setTimeout(function(){d.style.opacity="0";},1500);}
 function expandAll(){document.querySelectorAll(".acc-group").forEach(function(g){g.classList.add("open");});}
 function collapseAll(){document.querySelectorAll(".acc-group, .acc-item").forEach(function(e){e.classList.remove("open");});}
+function toggleNavGroup(el){el.classList.toggle("open");}
 function toggleSidebar(){document.getElementById("sidebar").classList.toggle("open");var o=document.getElementById("sidebarOverlay");if(o)o.classList.toggle("open");}
 function closeSidebar(){document.getElementById("sidebar").classList.remove("open");var o=document.getElementById("sidebarOverlay");if(o)o.classList.remove("open");}
 function goBack(){if(window.history.length>1){window.history.back();}else{window.location.href="index.html";}}

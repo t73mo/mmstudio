@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="MM Studio">
+<title>Заметки | MM Studio</title>
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Unbounded:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script>
+var c="";
+if(localStorage.getItem("admin_auth")==="1")c="auth-ok";
+if(localStorage.getItem("mm_theme")==="dark"||(c&&!localStorage.getItem("mm_theme")&&window.matchMedia&&window.matchMedia("(prefers-color-scheme:dark)").matches))c+=" dark";
+if(c)document.documentElement.className=c;
+</script>
+<style>.auth-ok #loginScreen{display:none!important}.auth-ok #adminPanel{display:flex!important}</style>
+</head><body>
+<div class="login-screen" id="loginScreen">
+<div class="login-box"><h1>MM Studio</h1><p>Заметки</p>
+<input type="text" id="usernameInput" placeholder="Логин" autofocus>
+<input type="password" id="passwordInput" placeholder="Пароль">
+<button onclick="login()">Войти</button>
+<div class="login-error" id="loginError">Неверный логин или пароль</div>
+</div></div>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+<div class="admin" id="adminPanel">
+<nav class="sidebar" id="sidebar"><div class="sidebar-header"><h1>MM Studio</h1><p>Админ-панель</p></div><div class="sidebar-nav"><a class="nav-item" href="index.html"><span class="material-icons">home</span><span class="nav-item-text">Главная</span></a><div class="nav-group"><div class="nav-item nav-group-header" onclick="toggleNavGroup(this.parentElement)"><span class="material-icons">storage</span><span class="nav-item-text">База данных</span><span class="nav-arrow">&#9654;</span></div><div class="nav-group-body"><div class="nav-group"><div class="nav-item sub nav-group-header" onclick="toggleNavGroup(this.parentElement)"><span class="nav-item-text">Бизнес</span><span class="nav-arrow">&#9654;</span></div><div class="nav-group-body"><a class="nav-item sub2" href="plan.html"><span class="nav-item-text">План</span></a><a class="nav-item sub2" href="prices.html"><span class="nav-item-text">Цены</span></a><a class="nav-item sub2" href="proposals.html"><span class="nav-item-text">Идеи</span></a></div></div><div class="nav-group"><div class="nav-item sub nav-group-header" onclick="toggleNavGroup(this.parentElement)"><span class="nav-item-text">Мастерская</span><span class="nav-arrow">&#9654;</span></div><div class="nav-group-body"><a class="nav-item sub2" href="inventory.html"><span class="nav-item-text">Инструменты</span></a><a class="nav-item sub2" href="machines.html"><span class="nav-item-text">Станки</span></a><a class="nav-item sub2" href="materials.html"><span class="nav-item-text">Материалы</span></a></div></div><div class="nav-group"><div class="nav-item sub nav-group-header" onclick="toggleNavGroup(this.parentElement)"><span class="nav-item-text">Цифровое</span><span class="nav-arrow">&#9654;</span></div><div class="nav-group-body"><a class="nav-item sub2" href="print3d.html"><span class="nav-item-text">3D печать</span></a><a class="nav-item sub2" href="marketing.html"><span class="nav-item-text">Маркетинг</span></a></div></div></div></div><a class="nav-item" href="chats.html"><span class="material-icons">chat</span><span class="nav-item-text">Чат</span></a><a class="nav-item active" href="notes.html"><span class="material-icons">sticky_note_2</span><span class="nav-item-text">Заметки</span></a></div><div class="theme-toggle" onclick="toggleTheme()"><span class="material-icons" id="themeIcon">dark_mode</span><span id="themeLabel">Тёмная тема</span></div><div class="sidebar-footer"><button onclick="expandAll()">+</button><button onclick="collapseAll()">-</button><button onclick="logout()">Выйти</button></div></nav>
+<div class="main"><div class="main-header"><button class="burger" onclick="toggleSidebar()">&#9776;</button><div class="main-title">Заметки</div></div><div class="main-content"><div class="note-add-bar"><textarea id="noteInput" placeholder="Напишите заметку..." maxlength="2000"></textarea><button onclick="addNote()">Добавить</button></div><div id="notesList"></div></div></div></div>
+<script src="data.js"></script>
+<script src="app.js?v=2"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+<script>
+var NOTE_CFG={apiKey:"AIzaSyD3XHJ3xdeJC_ALeIK4nOf1EASO39W3Gh0",authDomain:"mmstudio-86917.firebaseapp.com",databaseURL:"https://mmstudio-86917-default-rtdb.europe-west1.firebasedatabase.app",projectId:"mmstudio-86917",storageBucket:"mmstudio-86917.firebasestorage.app",messagingSenderId:"466384625481",appId:"1:466384625481:web:fb4bb7144d0d329be8c498"};
+var noteDb=null;
+function getMyId(){return(localStorage.getItem("admin_user")||"").toLowerCase();}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function initNotes(){
+  var myId=getMyId();if(!myId)return;
+  try{if(!firebase.apps.length)firebase.initializeApp(NOTE_CFG);noteDb=firebase.database();}catch(e){return;}
+  noteDb.ref("notes/"+myId).orderByChild("ts").on("value",function(snap){
+    var notes=[];
+    snap.forEach(function(ch){notes.push({id:ch.key,text:ch.val().text,ts:ch.val().ts});});
+    notes.reverse();
+    var container=document.getElementById("notesList");
+    if(!notes.length){container.innerHTML='<div class="empty-state">Нет заметок</div>';return;}
+    var html="";
+    for(var i=0;i<notes.length;i++){
+      var n=notes[i];
+      var dateStr=n.ts?new Date(n.ts).toLocaleString("ru-RU",{day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}):"";
+      html+='<div class="note-card"><div class="note-card-actions"><button class="btn-del" onclick="delNote(\''+n.id+'\')" title="Удалить">&#10005;</button></div><div class="note-card-text">'+esc(n.text)+'</div><div class="note-card-time">'+dateStr+'</div></div>';
+    }
+    container.innerHTML=html;
+  });
+}
+function addNote(){
+  var inp=document.getElementById("noteInput");
+  var text=inp.value.trim();if(!text||!noteDb)return;
+  var myId=getMyId();
+  noteDb.ref("notes/"+myId).push({text:text,ts:Date.now()});
+  inp.value="";
+}
+function delNote(id){
+  if(!confirm("Удалить заметку?"))return;
+  var myId=getMyId();
+  if(noteDb)noteDb.ref("notes/"+myId+"/"+id).remove();
+}
+document.addEventListener("keydown",function(e){
+  if(e.key==="Enter"&&e.ctrlKey)addNote();
+});
+if(localStorage.getItem("admin_auth")==="1")initNotes();
+</script>
+</body></html>

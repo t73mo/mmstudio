@@ -173,3 +173,29 @@ body.dark .search-result mark{background:#554400;color:#ffeaa7}
 @media(max-width:768px){
   #chat-popup{width:calc(100vw - 20px);right:10px;bottom:10px;height:360px}
 }
+.nav-group-body{display:none;padding:0}
+.nav-group.open>.nav-group-body{display:block}
+.nav-group>.nav-group-header{cursor:pointer;user-select:none}
+.nav-group>.nav-group-header .nav-arrow{font-size:0.6rem;color:var(--muted);transition:transform .2s;width:14px;text-align:center;flex-shrink:0}
+.nav-group.open>.nav-group-header .nav-arrow{transform:rotate(90deg)}
+.nav-item.sub{padding-left:28px;font-size:0.78rem}
+.nav-item.sub2{padding-left:42px;font-size:0.75rem}
+.chat-list-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;text-decoration:none;color:inherit}
+.chat-list-item:hover,.chat-list-item:active{background:var(--hover)}
+.chat-list-avatar{width:46px;height:46px;border-radius:50%;background:var(--text);color:var(--bg);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.1rem;flex-shrink:0}
+.chat-list-info{flex:1;min-width:0}
+.chat-list-name{font-weight:600;font-size:0.88rem;display:flex;align-items:center;gap:6px}
+.chat-list-last{font-size:0.78rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chat-list-time{font-size:0.68rem;color:var(--muted);flex-shrink:0;align-self:flex-start;padding-top:2px}
+.note-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px;position:relative}
+.note-card-text{font-size:0.85rem;white-space:pre-wrap;word-break:break-word}
+.note-card-time{font-size:0.65rem;color:var(--muted);margin-top:8px}
+.note-card-actions{position:absolute;top:10px;right:10px;display:flex;gap:4px}
+.note-card-actions button{background:none;border:none;cursor:pointer;font-size:0.8rem;padding:4px 6px;color:var(--muted);border-radius:4px}
+.note-card-actions button:hover,.note-card-actions button:active{background:var(--hover)}
+.note-card-actions .btn-del{color:#c00}
+.note-add-bar{display:flex;gap:8px;margin-bottom:16px}
+.note-add-bar textarea{flex:1;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:0.85rem;font-family:inherit;outline:none;background:var(--bg);color:var(--text);resize:none;min-height:60px}
+.note-add-bar textarea:focus{border-color:var(--text)}
+.note-add-bar button{padding:10px 18px;background:var(--text);color:var(--bg);border:none;border-radius:8px;font-size:0.82rem;font-weight:600;cursor:pointer;font-family:inherit;align-self:flex-end}
+.note-add-bar button:active{opacity:.85}
