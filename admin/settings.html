@@ -63,8 +63,8 @@ if(c)document.documentElement.className=c;
   </div>
   <input type="file" id="settingsFileInput" accept="image/*" onchange="handleAvatar(event)">
 </div>
-<div class="settings-field"><label>Отображаемое имя</label><input type="text" id="settingsName" placeholder="Ваше имя"></div>
-<div class="settings-field"><label>Дата рождения</label><input type="date" id="settingsBirthday"></div>
+<div class="settings-field"><label>Отображаемое имя</label><input type="text" id="settingsName" placeholder="Ваше имя" oninput="autoSave()"></div>
+<div class="settings-field"><label>Дата рождения</label><input type="date" id="settingsBirthday" onchange="autoSave()"></div>
 <div style="border-top:1px solid var(--border);margin:16px 0;padding-top:16px"><h3 style="font-family:'Unbounded',sans-serif;font-size:0.82rem;margin-bottom:12px">Смена пароля</h3>
 <div class="settings-field"><label>Текущий пароль</label><input type="password" id="settingsPassOld" placeholder="Введите текущий пароль"></div>
 <div class="settings-field"><label>Новый пароль</label><input type="password" id="settingsPass" placeholder="Введите новый пароль"></div>
