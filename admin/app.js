@@ -186,10 +186,112 @@ document.addEventListener("click",function(e){
   var sr=document.getElementById("searchResults");var si=document.getElementById("searchInput");
   if(sr&&si&&!sr.contains(e.target)&&e.target!==si&&!si.contains(e.target))sr.style.display="none";
 });
+/* === POPUP MESSENGER === */
+var POPUP_CFG={apiKey:"AIzaSyD3XHJ3xdeJC_ALeIK4nOf1EASO39W3Gh0",authDomain:"mmstudio-86917.firebaseapp.com",databaseURL:"https://mmstudio-86917-default-rtdb.europe-west1.firebasedatabase.app",projectId:"mmstudio-86917",storageBucket:"mmstudio-86917.firebasestorage.app",messagingSenderId:"466384625481",appId:"1:466384625481:web:fb4bb7144d0d329be8c498"};
+var POPUP_NAMES={telman:"Тельман",anastasia:"Анастасия"};
+var popupDb=null,popupMyId=null,popupMyName="",popupActiveContact=null;
+
+function initPopupChat(){
+  var u=(localStorage.getItem("admin_user")||"").toLowerCase();
+  if(!u)return;
+  popupMyId=u;popupMyName=POPUP_NAMES[u]||u;
+  try{if(!firebase.apps.length)firebase.initializeApp(POPUP_CFG);popupDb=firebase.database();}catch(e){return;}
+  popupDb.ref(".info/connected").on("value",function(snap){
+    if(snap.val()===true){popupDb.ref("presence/"+popupMyId).set({online:true,ts:Date.now()});popupDb.ref("presence/"+popupMyId).onDisconnect().set({online:false,ts:Date.now()});}
+  });
+}
+
+function togglePopupChat(){
+  var popup=document.getElementById("msPopup");
+  popup.classList.toggle("open");
+  if(popup.classList.contains("open")){
+    var chatList=popup.querySelector(".ms-popup-chat-list");
+    var chatWindow=popup.querySelector(".ms-popup-chat");
+    if(chatList)chatList.style.display="";
+    if(chatWindow)chatWindow.classList.remove("open");
+    popupActiveContact=null;
+    loadPopupContacts();
+  }
+}
+
+function loadPopupContacts(){
+  if(!popupDb||!popupMyId)return;
+  var container=document.querySelector(".ms-popup-list");
+  var users=Object.keys(POPUP_NAMES).filter(function(u){return u!==popupMyId;});
+  var html='';
+  for(var i=0;i<users.length;i++){
+    var uid=users[i];var name=POPUP_NAMES[uid];
+    html+='<div class="ms-popup-contact" onclick="openPopupChatWith(\''+uid+'\')">';
+    html+='<div class="ms-popup-contact-avatar">'+name.charAt(0)+'</div>';
+    html+='<div><div class="ms-popup-contact-name">'+name+'</div>';
+    html+='<div class="ms-popup-contact-last" id="p-last-'+uid+'">Загрузка...</div></div></div>';
+  }
+  container.innerHTML=html;
+  for(var j=0;j<users.length;j++){
+    (function(uid){
+      popupDb.ref("messages").orderByChild("time").limitToLast(1).on("value",function(snap){
+        var last=null;
+        snap.forEach(function(ch){var m=ch.val();if(m.user===uid||m.user===popupMyId)last=m;});
+        var el=document.getElementById("p-last-"+uid);
+        if(el&&last)el.textContent=(last.user===popupMyId?"Вы: ":"")+((last.text||"Фото").substring(0,30));
+      });
+    })(users[j]);
+  }
+}
+
+function openPopupChatWith(uid){
+  popupActiveContact=uid;
+  var name=POPUP_NAMES[uid]||uid;
+  document.querySelector(".ms-popup-chat-list").style.display="none";
+  var chat=document.querySelector(".ms-popup-chat");
+  chat.classList.add("open");
+  chat.querySelector(".name").textContent=name;
+  chat.querySelector(".ms-popup-messages").innerHTML="";
+  loadPopupMessages(uid);
+}
+
+function closePopupChat(){
+  document.querySelector(".ms-popup-chat-list").style.display="";
+  document.querySelector(".ms-popup-chat").classList.remove("open");
+  popupActiveContact=null;
+}
+
+function loadPopupMessages(uid){
+  if(!popupDb)return;
+  popupDb.ref("messages").orderByChild("time").on("value",function(snap){
+    var container=document.querySelector(".ms-popup-messages");
+    var html="";
+    snap.forEach(function(ch){
+      var m=ch.val();
+      if(m.user!==uid&&m.user!==popupMyId)return;
+      var isMe=m.user===popupMyId;
+      var cls=isMe?"ms-msg ms-msg-me":"ms-msg ms-msg-other";
+      var imgHtml="";if(m.image)imgHtml='<img class="ms-msg-img" src="'+m.image+'" style="max-width:160px;max-height:120px;border-radius:6px;margin:2px 0;cursor:pointer" onclick="window.open(this.src)" loading="lazy">';
+      html+='<div class="'+cls+'" style="max-width:85%;padding:6px 10px;font-size:0.78rem;border-radius:10px;word-break:break-word">';
+      if(!isMe)html+='<div style="font-size:0.58rem;font-weight:700;opacity:.6;margin-bottom:1px">'+escHtml(m.name)+'</div>';
+      if(imgHtml)html+=imgHtml;
+      if(m.text)html+='<div style="white-space:pre-wrap">'+escHtml(m.text)+'</div>';
+      html+='<div style="text-align:right;margin-top:2px"><span style="font-size:0.52rem;opacity:.4">'+new Date(m.time).toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"})+'</span></div>';
+      html+='</div>';
+    });
+    container.innerHTML=html||'<div style="text-align:center;color:var(--muted);font-size:0.8rem;padding:20px">Нет сообщений</div>';
+    container.scrollTop=container.scrollHeight;
+  });
+}
+
+function sendPopupMsg(){
+  var inp=document.querySelector(".ms-popup-input input");
+  var text=inp.value.trim();
+  if(!text||!popupActiveContact||!popupDb)return;
+  popupDb.ref("messages").push({user:popupMyId,name:popupMyName,text:text,time:Date.now(),read:false});
+  inp.value="";
+}
+
 if(localStorage.getItem("admin_auth")==="1"){
   var ls=document.getElementById("loginScreen");if(ls)ls.style.display="none";
   var ap=document.getElementById("adminPanel");if(ap)ap.style.display="flex";
   showUser();
+  initPopupChat();
 }
 applyTheme();
 (function(){var si=document.getElementById("usernameInput");var pi=document.getElementById("passwordInput");if(si)si.addEventListener("keydown",function(e){if(e.key==="Enter")login();});if(pi)pi.addEventListener("keydown",function(e){if(e.key==="Enter")login();});})();
