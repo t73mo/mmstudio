@@ -28,31 +28,7 @@ html.dark{--bg:#111;--surface:#1a1a1a;--text:#e8e8e8;--text2:#aaa;--muted:#777;-
 .sidebar-footer{padding:10px 14px;border-top:1px solid var(--border)}
 .sidebar-footer button{width:100%;padding:9px;border:1px solid var(--border);border-radius:6px;background:var(--surface);cursor:pointer;font-family:inherit;font-size:0.75rem;color:var(--muted);-webkit-tap-highlight-color:transparent;transition:background .15s}
 .sidebar-footer button:hover,.sidebar-footer button:active{background:var(--hover)}
-.ms-fab{position:fixed;bottom:24px;right:24px;width:52px;height:52px;border-radius:50%;background:var(--text);color:var(--bg);border:none;font-size:1.4rem;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.2);z-index:150;display:flex;align-items:center;justify-content:center}
-.ms-fab:active{opacity:.85}
-.ms-popup{position:fixed;bottom:88px;right:24px;width:320px;height:420px;max-width:calc(100vw - 48px);max-height:calc(100vh - 120px);background:var(--surface);border:1px solid var(--border);border-radius:12px;display:none;flex-direction:column;z-index:160;box-shadow:0 8px 32px rgba(0,0,0,.15);overflow:hidden}
-.ms-popup.open{display:flex}
-.ms-popup-header{padding:10px 14px;border-bottom:1px solid var(--border);font-family:"Unbounded",sans-serif;font-size:0.82rem;font-weight:600;display:flex;align-items:center;justify-content:space-between}
-.ms-popup-header button{background:none;border:none;cursor:pointer;font-size:1rem;color:var(--muted);padding:4px}
-.ms-popup-list{flex:1;overflow-y:auto}
-.ms-popup-contact{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--border);transition:background .15s}
-.ms-popup-contact:hover,.ms-popup-contact:active{background:var(--hover)}
-.ms-popup-contact-avatar{width:36px;height:36px;border-radius:50%;background:var(--text);color:var(--bg);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.85rem;flex-shrink:0}
-.ms-popup-contact-name{font-weight:600;font-size:0.82rem}
-.ms-popup-contact-last{font-size:0.72rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.ms-popup-chat{flex:1;display:none;flex-direction:column}
-.ms-popup-chat.open{display:flex}
-.ms-popup-chat-list{display:flex;flex-direction:column;flex:1;overflow:hidden}
-.ms-popup-chat-topbar{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border);flex-shrink:0}
-.ms-popup-chat-topbar button{background:none;border:none;cursor:pointer;font-size:1rem;color:var(--muted);padding:4px}
-.ms-popup-chat-topbar .name{font-weight:600;font-size:0.82rem;flex:1}
-.ms-popup-messages{flex:1;overflow-y:auto;padding:8px 10px;display:flex;flex-direction:column;gap:3px}
-.ms-popup-input{display:flex;gap:6px;padding:8px 10px;border-top:1px solid var(--border);flex-shrink:0}
-.ms-popup-input input{flex:1;padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-size:0.82rem;font-family:inherit;background:var(--bg);color:var(--text);outline:none}
-.ms-popup-input button{background:var(--text);color:var(--bg);border:none;border-radius:8px;padding:8px 12px;cursor:pointer;font-size:0.85rem}
-.ms-popup-input button:active{opacity:.8}
-.ms-popup-input button:disabled{opacity:.3}
-@media(max-width:768px){.ms-popup{width:calc(100vw - 20px);right:10px;bottom:80px}}
+
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
 .main-header{padding:10px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;background:var(--surface);flex-shrink:0}
 .burger{display:none;background:none;border:none;font-size:1.3rem;cursor:pointer;padding:8px;color:var(--text);-webkit-tap-highlight-color:transparent;line-height:1}
