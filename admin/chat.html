@@ -272,7 +272,7 @@ function toggleMsNavGroup(id){document.getElementById(id).classList.toggle("open
 function toggleSidebar(){var s=document.getElementById("sidebar"),o=document.getElementById("sidebarOverlay");s.classList.toggle("open");o.classList.toggle("open");}
 function closeSidebar(){document.getElementById("sidebar").classList.remove("open");document.getElementById("sidebarOverlay").classList.remove("open");}
 function toggleTheme(){var d=document.documentElement;d.classList.toggle("dark");localStorage.setItem("mm_theme",d.classList.contains("dark")?"dark":"light");var ic=document.getElementById("themeIcon");var lb=document.getElementById("themeLabel");if(ic)ic.textContent=d.classList.contains("dark")?"light_mode":"dark_mode";if(lb)lb.textContent=d.classList.contains("dark")?"Светлая тема":"Тёмная тема";}
-function logout(){localStorage.removeItem("admin_auth");localStorage.removeItem("admin_user");window.location.reload();}
+function logout(){localStorage.removeItem("admin_auth");localStorage.removeItem("admin_user");window.location.href="index.html";}
 
 function doLogin(){
   var u=document.getElementById("usernameInput").value;
@@ -435,7 +435,7 @@ function markContactRead(uid){
   if(!db)return;
   db.ref("messages").once("value",function(snap){
     var updates={};
-    snap.forEach(function(ch){var m=ch.val();if(m.user!==uid&&!m.read)updates[ch.key+"/read"]=true;});
+    snap.forEach(function(ch){var m=ch.val();if(m.user===uid&&!m.read)updates[ch.key+"/read"]=true;});
     if(Object.keys(updates).length)db.ref("messages").update(updates);
   });
 }
@@ -601,6 +601,7 @@ function setupInput(){
 
 function handleFile(e){
   var file=e.target.files[0];if(!file)return;
+  if(file.size>2*1024*1024){alert("Файл слишком большой. Максимум 2 МБ.");return;}
   var reader=new FileReader();
   reader.onload=function(ev){
     previewData=ev.target.result;

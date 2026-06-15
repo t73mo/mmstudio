@@ -85,7 +85,7 @@ html.dark{--bg:#111;--surface:#1a1a1a;--text:#e8e8e8;--text2:#aaa;--muted:#777;-
 .search-result .sr-tab{font-size:0.65rem;color:var(--muted);background:var(--bg);padding:2px 6px;border-radius:4px;white-space:nowrap}
 .search-result .sr-text{color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
 .search-result mark{background:#ffeaa7;color:#111;padding:0 2px;border-radius:2px}
-body.dark .search-result mark{background:#554400;color:#ffeaa7}
+html.dark .search-result mark{background:#554400;color:#ffeaa7}
 #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 20px;border-radius:10px;font-size:0.82rem;z-index:300;opacity:0;transition:opacity 0.3s;pointer-events:none}
 .loader{text-align:center;padding:40px 0;color:var(--muted);font-size:0.85rem}
 .loader .spinner{display:inline-block;width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--text);border-radius:50%;animation:spin .6s linear infinite;margin-right:8px;vertical-align:middle}
