@@ -20,7 +20,7 @@ if(localStorage.getItem("mm_theme")==="dark"||(c&&!localStorage.getItem("mm_them
 if(c)document.documentElement.className=c;
 </script>
 <style>
-.auth-ok #loginScreen{display:none!important}.auth-ok #adminPanel{display:flex!important}.auth-ok #chatApp{display:flex!important}
+.auth-ok #loginScreen{display:none!important}.auth-ok #adminPanel{display:flex!important}
 .login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
 .login-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:36px;width:100%;max-width:320px;text-align:center}
 .login-box h1{font-family:"Unbounded",sans-serif;font-size:1.1rem;margin-bottom:6px}
@@ -31,17 +31,15 @@ if(c)document.documentElement.className=c;
 .login-box button:hover{opacity:.85}
 .login-error{color:#c00;font-size:0.8rem;margin-top:6px;display:none}
 #chatApp{display:none;flex:1;flex-direction:column;background:var(--bg);overflow:hidden;min-width:0}
-.chat-topbar{display:flex;align-items:center;gap:8px;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0}
-.chat-topbar .back-btn{background:none;border:none;font-size:1.2rem;cursor:pointer;padding:8px;color:var(--text);border-radius:6px}
-.chat-topbar .back-btn:active{background:var(--hover)}
-.chat-topbar-title{flex:1;font-family:"Unbounded",sans-serif;font-size:0.85rem}
-.chat-topbar-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.chat-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:6px;-webkit-overflow-scrolling:touch}
+.chat-topbar{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0}
+.chat-topbar .burger{background:none;border:none;font-size:1.3rem;cursor:pointer;padding:8px;color:var(--text);border-radius:6px;display:none;line-height:1}
+.chat-topbar .burger:active{background:var(--hover)}
+.chat-messages{flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:2px;-webkit-overflow-scrolling:touch}
 .chat-date-sep{text-align:center;font-size:0.68rem;color:var(--muted);padding:8px 0;position:relative}
 .chat-date-sep::before,.chat-date-sep::after{content:"";position:absolute;top:50%;width:calc(50% - 35px);height:1px;background:var(--border)}
 .chat-date-sep::before{left:0}
 .chat-date-sep::after{right:0}
-.chat-msg{max-width:75%;padding:8px 12px;border-radius:12px;font-size:0.84rem;line-height:1.4;position:relative;word-break:break-word;cursor:default}
+.chat-msg{max-width:70%;padding:8px 12px;border-radius:12px;font-size:0.84rem;line-height:1.4;position:relative;word-break:break-word;cursor:default}
 .chat-me{align-self:flex-end;background:var(--text);color:var(--bg);border-bottom-right-radius:3px}
 .chat-other{align-self:flex-start;background:var(--surface);border:1px solid var(--border);border-bottom-left-radius:3px}
 .chat-msg-name{font-size:0.62rem;font-weight:700;margin-bottom:2px;opacity:.6}
@@ -53,7 +51,7 @@ if(c)document.documentElement.className=c;
 .msg-check{font-size:0.62rem;line-height:1;opacity:.45}
 .msg-check.msg-read{opacity:.75}
 .msg-edited{font-size:0.56rem;opacity:.45;font-style:italic}
-.chat-input-bar{display:flex;align-items:flex-end;gap:8px;padding:10px 16px;border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;padding-bottom:max(10px,env(safe-area-inset-bottom,10px));position:sticky;bottom:0;z-index:10}
+.chat-input-bar{display:flex;align-items:flex-end;gap:8px;padding:10px 16px;border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;padding-bottom:max(10px,env(safe-area-inset-bottom,10px))}
 .chat-attach{background:none;border:none;font-size:1.3rem;cursor:pointer;padding:8px;color:var(--muted);border-radius:8px;flex-shrink:0;line-height:1}
 .chat-attach:active{background:var(--hover)}
 .chat-input-wrap{flex:1;display:flex;align-items:center;background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:4px 4px 4px 14px}
@@ -61,9 +59,11 @@ if(c)document.documentElement.className=c;
 .chat-send{background:var(--text);color:var(--bg);border:none;border-radius:50%;width:36px;height:36px;cursor:pointer;font-size:1rem;flex-shrink:0;display:flex;align-items:center;justify-content:center}
 .chat-send:active{opacity:.8}
 .chat-send:disabled{opacity:.3;cursor:default}
-.chat-preview{position:relative;display:inline-block;margin:4px 0}
-.chat-preview img{max-width:200px;max-height:160px;border-radius:8px;border:1px solid var(--border)}
-.chat-preview-remove{position:absolute;top:4px;right:4px;background:rgba(0,0,0,.6);color:#fff;border:none;border-radius:50%;width:22px;height:22px;cursor:pointer;font-size:0.7rem;display:flex;align-items:center;justify-content:center}
+.chat-preview-bar{display:flex;align-items:center;gap:8px;padding:8px 16px;border-top:1px solid var(--border);background:var(--surface)}
+.chat-preview-bar img{width:48px;height:48px;object-fit:cover;border-radius:8px;border:1px solid var(--border)}
+.chat-preview-bar .preview-info{flex:1;font-size:0.78rem;color:var(--muted)}
+.chat-preview-bar .preview-remove{background:none;border:none;cursor:pointer;font-size:1rem;color:var(--muted);padding:4px}
+.chat-preview-bar .preview-remove:active{background:var(--hover);border-radius:4px}
 .chat-empty{text-align:center;color:var(--muted);font-size:0.85rem;padding:40px 20px}
 #chatFileInput{display:none}
 .edit-bar{display:flex;align-items:center;gap:6px;padding:6px 16px;background:var(--hover);border-top:1px solid var(--border);font-size:0.78rem;color:var(--text)}
@@ -72,9 +72,10 @@ if(c)document.documentElement.className=c;
 .edit-bar button:active{background:var(--border)}
 .edit-bar .edit-cancel{color:#c00}
 @media(min-width:769px){
-  .chat-messages{padding:24px 32px;max-width:100%;width:100%}
-  .chat-input-bar{padding:12px 32px;max-width:100%;width:100%}
+  .chat-topbar .burger{display:none}
+  .chat-messages{padding:16px 24px}
   .chat-msg{max-width:55%}
+  .chat-input-bar{padding:12px 24px}
 }
 @media(max-width:768px){
   .chat-topbar .burger{display:block}
@@ -96,21 +97,38 @@ if(c)document.documentElement.className=c;
 <div class="login-error" id="loginError">Неверный логин или пароль</div>
 </div></div>
 
+<div class="photo-overlay" id="photoOverlay" onclick="closePhoto()">
+  <button class="photo-overlay-close">&#10005;</button>
+  <img id="photoOverlayImg" src="">
+</div>
+
 <div class="admin" id="adminPanel">
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
-<nav class="sidebar" id="sidebar"><div class="sidebar-header"><h1>MM Studio</h1><p>Админ-панель</p></div><div class="sidebar-nav"><a class="nav-item" href="index.html"><span class="material-icons">home</span><span class="nav-item-text">Главная</span></a><div class="nav-group"><div class="nav-item nav-group-header" onclick="toggleNavGroup(this.parentElement)"><span class="material-icons">storage</span><span class="nav-item-text">База данных</span><span class="nav-arrow">&#9654;</span></div><div class="nav-group-body"><div class="nav-group"><div class="nav-item sub nav-group-header" onclick="toggleNavGroup(this.parentElement)"><span class="nav-item-text">Бизнес</span><span class="nav-arrow">&#9654;</span></div><div class="nav-group-body"><a class="nav-item sub2" href="plan.html"><span class="nav-item-text">План</span></a><a class="nav-item sub2" href="prices.html"><span class="nav-item-text">Цены</span></a><a class="nav-item sub2" href="proposals.html"><span class="nav-item-text">Идеи</span></a></div></div><div class="nav-group"><div class="nav-item sub nav-group-header" onclick="toggleNavGroup(this.parentElement)"><span class="nav-item-text">Мастерская</span><span class="nav-arrow">&#9654;</span></div><div class="nav-group-body"><a class="nav-item sub2" href="inventory.html"><span class="nav-item-text">Инструменты</span></a><a class="nav-item sub2" href="machines.html"><span class="nav-item-text">Станки</span></a><a class="nav-item sub2" href="materials.html"><span class="nav-item-text">Материалы</span></a></div></div><div class="nav-group"><div class="nav-item sub nav-group-header" onclick="toggleNavGroup(this.parentElement)"><span class="nav-item-text">Цифровое</span><span class="nav-arrow">&#9654;</span></div><div class="nav-group-body"><a class="nav-item sub2" href="print3d.html"><span class="nav-item-text">3D печать</span></a><a class="nav-item sub2" href="marketing.html"><span class="nav-item-text">Маркетинг</span></a></div></div></div></div><a class="nav-item active" href="chats.html"><span class="material-icons">chat</span><span class="nav-item-text">Чат</span></a><a class="nav-item" href="notes.html"><span class="material-icons">sticky_note_2</span><span class="nav-item-text">Заметки</span></a></div><div class="theme-toggle" onclick="toggleTheme()"><span class="material-icons" id="themeIcon">dark_mode</span><span id="themeLabel">Тёмная тема</span></div><div class="sidebar-footer"><button onclick="expandAll()">+</button><button onclick="collapseAll()">-</button><button onclick="logout()">Выйти</button></div></nav>
+<nav class="sidebar" id="sidebar"><div class="sidebar-header"><h1>MM Studio</h1><p>Админ-панель</p></div><div class="sidebar-nav"><a class="nav-item" href="index.html"><span class="material-icons">home</span><span class="nav-item-text">Главная</span></a><div class="nav-group"><div class="nav-item nav-group-header" onclick="toggleNavGroup(this.parentElement)"><span class="material-icons">storage</span><span class="nav-item-text">База данных</span><span class="nav-arrow">&#9654;</span></div><div class="nav-group-body"><div class="nav-group"><div class="nav-item sub nav-group-header" onclick="toggleNavGroup(this.parentElement)"><span class="nav-item-text">Бизнес</span><span class="nav-arrow">&#9654;</span></div><div class="nav-group-body"><a class="nav-item sub2" href="plan.html"><span class="nav-item-text">План</span></a><a class="nav-item sub2" href="prices.html"><span class="nav-item-text">Цены</span></a><a class="nav-item sub2" href="proposals.html"><span class="nav-item-text">Идеи</span></a></div></div><div class="nav-group"><div class="nav-item sub nav-group-header" onclick="toggleNavGroup(this.parentElement)"><span class="nav-item-text">Мастерская</span><span class="nav-arrow">&#9654;</span></div><div class="nav-group-body"><a class="nav-item sub2" href="inventory.html"><span class="nav-item-text">Инструменты</span></a><a class="nav-item sub2" href="machines.html"><span class="nav-item-text">Станки</span></a><a class="nav-item sub2" href="materials.html"><span class="nav-item-text">Материалы</span></a></div></div><div class="nav-group"><div class="nav-item sub nav-group-header" onclick="toggleNavGroup(this.parentElement)"><span class="nav-item-text">Цифровое</span><span class="nav-arrow">&#9654;</span></div><div class="nav-group-body"><a class="nav-item sub2" href="print3d.html"><span class="nav-item-text">3D печать</span></a><a class="nav-item sub2" href="marketing.html"><span class="nav-item-text">Маркетинг</span></a></div></div></div></div><a class="nav-item active" href="chats.html"><span class="material-icons">chat</span><span class="nav-item-text">Чат</span></a><a class="nav-item" href="notes.html"><span class="material-icons">sticky_note_2</span><span class="nav-item-text">Заметки</span></a><a class="nav-item" href="settings.html"><span class="material-icons">settings</span><span class="nav-item-text">Настройки</span></a></div><div class="theme-toggle" onclick="toggleTheme()"><span class="material-icons" id="themeIcon">dark_mode</span><span id="themeLabel">Тёмная тема</span></div><div class="sidebar-footer"><button onclick="expandAll()">+</button><button onclick="collapseAll()">-</button><button onclick="logout()">Выйти</button></div></nav>
 
 <div class="main">
+<div class="chat-contacts" id="chatContacts">
+  <div class="chat-contacts-header">Чаты</div>
+  <div class="chat-contacts-list" id="chatContactsList"></div>
+</div>
 <div id="chatApp">
   <div class="chat-topbar">
     <button class="burger" onclick="toggleSidebar()">&#9776;</button>
-    <div class="chat-topbar-title">Чат</div>
-    <div class="chat-topbar-dot" id="chatDot"></div>
+    <div class="chat-topbar-avatar" id="partnerAvatar"></div>
+    <div class="chat-topbar-info">
+      <div class="chat-topbar-name" id="partnerName"></div>
+      <div class="chat-topbar-status" id="partnerStatus">загрузка...</div>
+    </div>
   </div>
   <div class="chat-messages" id="chatMessages"><div class="chat-empty">Загрузка...</div></div>
   <div class="edit-bar" id="editBar" style="display:none">
     <span>Редактирование</span>
     <button class="edit-cancel" onclick="cancelEdit()">&#10005;</button>
+  </div>
+  <div class="chat-preview-bar" id="chatPreviewBar" style="display:none">
+    <img id="chatPreviewImg" src="">
+    <div class="preview-info">Фото</div>
+    <button class="preview-remove" onclick="removePreview()">&#10005;</button>
   </div>
   <div class="chat-input-bar">
     <label class="chat-attach" title="Прикрепить фото">&#128247;<input type="file" id="chatFileInput" accept="image/*"></label>
@@ -130,7 +148,7 @@ var USERS={"Telman":"Kn0pKa78","Anastasia":"mm2026"};
 var NAMES={telman:"Тельман",anastasia:"Анастасия"};
 var CFG={apiKey:"AIzaSyD3XHJ3xdeJC_ALeIK4nOf1EASO39W3Gh0",authDomain:"mmstudio-86917.firebaseapp.com",databaseURL:"https://mmstudio-86917-default-rtdb.europe-west1.firebasedatabase.app",projectId:"mmstudio-86917",storageBucket:"mmstudio-86917.firebasestorage.app",messagingSenderId:"466384625481",appId:"1:466384625481:web:fb4bb7144d0d329be8c498"};
 var VAPID_KEY="BJ_vMZzwlDnwXxOA84Vg8OmmK-Bjhm7BKGCMtlJUwr-Yb7YGEqqEPje3oj0vezA89LfRdmRPeNiN0P3-UnM7RSQ";
-var db,messaging,myId,myName,previewData=null,editingMsgId=null,lastNotifId=null;
+var db,messaging,myId,myName,partnerId,partnerName,previewData=null,editingMsgId=null,lastNotifId=null;
 
 function toggleNavGroup(el){el.classList.toggle("open");}
 function toggleSidebar(){var s=document.getElementById("sidebar"),o=document.getElementById("sidebarOverlay");s.classList.toggle("open");o.classList.toggle("open");}
@@ -138,29 +156,55 @@ function closeSidebar(){document.getElementById("sidebar").classList.remove("ope
 function toggleTheme(){var d=document.documentElement;d.classList.toggle("dark");localStorage.setItem("mm_theme",d.classList.contains("dark")?"dark":"light");}
 function logout(){localStorage.removeItem("admin_auth");localStorage.removeItem("admin_user");window.location.reload();}
 
+function getPartnerId(){return myId==="telman"?"anastasia":"telman";}
+
 function doLogin(){
   var u=document.getElementById("usernameInput").value;
   var p=document.getElementById("passwordInput").value;
-  if(USERS[u]&&USERS[u]===p){
-    document.getElementById("loginScreen").style.display="none";
-    document.getElementById("adminPanel").style.display="flex";
-    document.getElementById("chatApp").style.display="flex";
-    localStorage.setItem("admin_auth","1");
-    localStorage.setItem("admin_user",u);
-    myId=u.toLowerCase();myName=NAMES[myId]||u;
-    initChat();
-  }else document.getElementById("loginError").style.display="block";
+  var loginOk=false;
+  if(USERS[u]&&USERS[u]===p){loginOk=true;}
+  if(!loginOk){
+    try{if(!firebase.apps.length)firebase.initializeApp(CFG);}catch(e){}
+    var checkDb=firebase.database();
+    checkDb.ref("settings/"+u.toLowerCase()+"/password").once("value",function(snap){
+      if(snap.val()===p){doLoginFinal(u);}
+    });
+    return;
+  }
+  if(loginOk)doLoginFinal(u);
+  else document.getElementById("loginError").style.display="block";
+}
+
+function doLoginFinal(u){
+  document.getElementById("loginScreen").style.display="none";
+  document.getElementById("adminPanel").style.display="flex";
+  localStorage.setItem("admin_auth","1");
+  localStorage.setItem("admin_user",u);
+  myId=u.toLowerCase();myName=NAMES[myId]||u;
+  partnerId=getPartnerId();partnerName=NAMES[partnerId]||partnerId;
+  initChat();
 }
 
 function initChat(){
   try{if(!firebase.apps.length)firebase.initializeApp(CFG);db=firebase.database();}catch(e){return;}
   try{messaging=firebase.messaging();}catch(e){messaging=null;}
+  partnerId=getPartnerId();partnerName=NAMES[partnerId]||partnerId;
+  setupTopbar();
   setupPresence();
   loadMessages();
   setupInput();
   setupFCM();
   setupNotifListener();
+  loadContacts();
   if(Notification&&Notification.permission==="default") Notification.requestPermission();
+}
+
+function setupTopbar(){
+  document.getElementById("partnerName").textContent=partnerName;
+  document.getElementById("partnerAvatar").textContent=partnerName.charAt(0);
+  db.ref("settings/"+partnerId+"/displayName").once("value",function(snap){
+    var n=snap.val();if(n){partnerName=n;document.getElementById("partnerName").textContent=n;document.getElementById("partnerAvatar").textContent=n.charAt(0);}
+  });
 }
 
 function showNotif(title,body){
@@ -195,8 +239,7 @@ function setupFCM(){
 }
 
 function sendPush(text){
-  var otherId=myId==="telman"?"anastasia":"telman";
-  db.ref("fcmTokens/"+otherId).once("value",function(snap){
+  db.ref("fcmTokens/"+partnerId).once("value",function(snap){
     var token=snap.val();
     if(!token)return;
     db.ref("pushQueue").push({token:token,title:myName,body:text,url:"/mmstudio/admin/chat.html",ts:Date.now()});
@@ -210,12 +253,63 @@ function setupPresence(){
       db.ref("presence/"+myId).onDisconnect().set({online:false,ts:Date.now()});
     }
   });
-  var otherId=myId==="telman"?"anastasia":"telman";
-  db.ref("presence/"+otherId).on("value",function(snap){
+  db.ref("presence/"+partnerId).on("value",function(snap){
     var v=snap.val();
-    var dot=document.getElementById("chatDot");
-    dot.className="chat-topbar-dot "+(v&&v.online?"online-dot":"offline-dot");
+    var statusEl=document.getElementById("partnerStatus");
+    if(v&&v.online){
+      statusEl.textContent="в сети";
+      statusEl.className="chat-topbar-status online";
+    }else if(v&&v.ts){
+      var d=new Date(v.ts);
+      var timeStr=d.toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"});
+      var dateStr=d.toLocaleDateString("ru-RU",{day:"numeric",month:"short"});
+      statusEl.textContent="был(а) "+dateStr+" в "+timeStr;
+      statusEl.className="chat-topbar-status";
+    }else{
+      statusEl.textContent="не в сети";
+      statusEl.className="chat-topbar-status";
+    }
+    updateContactDot(partnerId,v);
   });
+}
+
+function updateContactDot(uid,presence){
+  var dot=document.getElementById("c-dot-"+uid);
+  if(!dot)return;
+  if(presence&&presence.online){dot.className="online-dot";dot.style.background="#4caf50";}
+  else{dot.className="online-dot";dot.style.background="#888";}
+}
+
+function loadContacts(){
+  var container=document.getElementById("chatContactsList");if(!container)return;
+  var users=Object.keys(NAMES).filter(function(u){return u!==myId;});
+  var html='';
+  for(var i=0;i<users.length;i++){
+    var uid=users[i];var name=NAMES[uid];
+    html+='<div class="chat-contact-item active" onclick="window.location.href=\'chat.html\'">';
+    html+='<div class="chat-contact-avatar"><span class="online-dot" id="c-dot-'+uid+'" style="background:#888"></span>'+name.charAt(0)+'</div>';
+    html+='<div class="chat-contact-info"><div class="chat-contact-name">'+name+'</div><div class="chat-contact-last" id="c-last-'+uid+'">Нет сообщений</div></div>';
+    html+='<div class="chat-contact-time" id="c-time-'+uid+'"></div>';
+    html+='</div>';
+  }
+  container.innerHTML=html;
+  for(var j=0;j<users.length;j++){
+    (function(uid){
+      db.ref("presence/"+uid).on("value",function(snap){
+        updateContactDot(uid,snap.val());
+      });
+      db.ref("messages").orderByChild("time").limitToLast(1).on("value",function(snap){
+        var last=null;
+        snap.forEach(function(ch){var m=ch.val();if(m.user===uid||m.user===myId)last=m;});
+        if(last){
+          var lt=document.getElementById("c-time-"+uid);
+          var ll=document.getElementById("c-last-"+uid);
+          if(lt)lt.textContent=new Date(last.time).toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"});
+          if(ll)ll.textContent=(last.user===myId?"Вы: ":"")+((last.text||"Фото").substring(0,40));
+        }
+      });
+    })(users[j]);
+  }
 }
 
 function loadMessages(){
@@ -245,7 +339,7 @@ function loadMessages(){
         checkHtml=m.read?'<span class="msg-check msg-read">&#10003;&#10003;</span>':'<span class="msg-check">&#10003;</span>';
       }
       var imgHtml="";
-      if(m.image) imgHtml='<img class="chat-msg-img" src="'+esc(m.image)+'" onclick="window.open(this.src)" loading="lazy">';
+      if(m.image) imgHtml='<img class="chat-msg-img" src="'+esc(m.image)+'" onclick="openPhoto(this.src)" loading="lazy">';
       html+='<div class="'+cls+'" data-msg-id="'+m.id+'" data-user="'+m.user+'" oncontextmenu="onMsgContext(event,\''+m.id+'\',\''+m.user+'\')">';
       if(!isMe) html+='<div class="chat-msg-name">'+esc(m.name)+'</div>';
       if(imgHtml) html+=imgHtml;
@@ -258,6 +352,17 @@ function loadMessages(){
     container.scrollTop=container.scrollHeight;
   });
 }
+
+function openPhoto(src){
+  var overlay=document.getElementById("photoOverlay");
+  var img=document.getElementById("photoOverlayImg");
+  img.src=src;
+  overlay.classList.add("open");
+}
+function closePhoto(){
+  document.getElementById("photoOverlay").classList.remove("open");
+}
+document.addEventListener("keydown",function(e){if(e.key==="Escape")closePhoto();});
 
 function markRead(){
   if(!myId||!db)return;
@@ -272,9 +377,9 @@ function markRead(){
 }
 
 document.addEventListener("visibilitychange",function(){
-  if(!document.hidden) document.title="Чат | MM Studio";
+  if(!document.hidden){document.title="Чат | MM Studio";markRead();}
 });
-window.addEventListener("focus",function(){document.title="Чат | MM Studio";});
+window.addEventListener("focus",function(){document.title="Чат | MM Studio";markRead();});
 
 function onMsgContext(e,msgId,userId){
   e.preventDefault();
@@ -307,7 +412,7 @@ function setupInput(){
   });
   inp.addEventListener("keydown",function(e){
     if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMsg();}
-    if(e.key==="Escape") cancelEdit();
+    if(e.key==="Escape"){cancelEdit();closePhoto();}
   });
   btn.addEventListener("click",sendMsg);
   document.getElementById("chatFileInput").addEventListener("change",handleFile);
@@ -318,12 +423,8 @@ function handleFile(e){
   var reader=new FileReader();
   reader.onload=function(ev){
     previewData=ev.target.result;
-    var wrap=document.querySelector(".chat-input-wrap");
-    var existing=wrap.querySelector(".chat-preview");if(existing)existing.remove();
-    var div=document.createElement("div");
-    div.className="chat-preview";
-    div.innerHTML='<img src="'+previewData+'"><button class="chat-preview-remove" onclick="removePreview()">&#10005;</button>';
-    wrap.insertBefore(div,wrap.firstChild);
+    document.getElementById("chatPreviewImg").src=previewData;
+    document.getElementById("chatPreviewBar").style.display="flex";
     document.getElementById("chatSendBtn").disabled=false;
   };
   reader.readAsDataURL(file);e.target.value="";
@@ -331,7 +432,7 @@ function handleFile(e){
 
 function removePreview(){
   previewData=null;
-  var p=document.querySelector(".chat-preview");if(p)p.remove();
+  document.getElementById("chatPreviewBar").style.display="none";
   document.getElementById("chatSendBtn").disabled=!document.getElementById("chatInput").value.trim();
 }
 
@@ -354,25 +455,16 @@ function sendMsg(){
   document.getElementById("chatSendBtn").disabled=true;
 }
 
-function sendPush(text){
-  var otherId=myId==="telman"?"anastasia":"telman";
-  db.ref("fcmTokens/"+otherId).once("value",function(snap){
-    var token=snap.val();
-    if(!token)return;
-    db.ref("pushQueue").push({token:token,title:myName,body:text,url:"/mmstudio/admin/chat.html",ts:Date.now()});
-  });
-}
-
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 function fmtTime(ts){return new Date(ts).toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"});}
 
 if(localStorage.getItem("admin_auth")==="1"){
   var ls=document.getElementById("loginScreen");if(ls)ls.style.display="none";
   var ap=document.getElementById("adminPanel");if(ap)ap.style.display="flex";
-  var ca=document.getElementById("chatApp");if(ca)ca.style.display="flex";
   myId=(localStorage.getItem("admin_user")||"").toLowerCase();
   myName=NAMES[myId]||localStorage.getItem("admin_user")||"";
-  if(myId) initChat();
+  partnerId=getPartnerId();partnerName=NAMES[partnerId]||partnerId;
+  if(myId)initChat();
 }
 
 if(window.visualViewport){

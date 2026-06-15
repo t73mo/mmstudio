@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="MM Studio">
+<title>Настройки | MM Studio</title>
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Unbounded:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script>
+var c="";
+if(localStorage.getItem("admin_auth")==="1")c="auth-ok";
+if(localStorage.getItem("mm_theme")==="dark"||(c&&!localStorage.getItem("mm_theme")&&window.matchMedia&&window.matchMedia("(prefers-color-scheme:dark)").matches))c+=" dark";
+if(c)document.documentElement.className=c;
+</script>
+<style>
+.auth-ok #loginScreen{display:none!important}.auth-ok #adminPanel{display:flex!important}
+.login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+.login-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:36px;width:100%;max-width:320px;text-align:center}
+.login-box h1{font-family:"Unbounded",sans-serif;font-size:1.1rem;margin-bottom:6px}
+.login-box p{color:var(--muted);font-size:0.8rem;margin-bottom:20px}
+.login-box input{width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:8px;font-size:1rem;font-family:inherit;margin-bottom:8px;outline:none;background:var(--bg);color:var(--text)}
+.login-box input:focus{border-color:var(--text)}
+.login-box button{width:100%;padding:12px;background:var(--text);color:var(--bg);border:none;border-radius:8px;font-size:1rem;font-weight:600;cursor:pointer;font-family:inherit}
+.login-box button:hover{opacity:.85}
+.login-error{color:#c00;font-size:0.8rem;margin-top:6px;display:none}
+.settings-avatar-wrap{display:flex;flex-direction:column;align-items:center;margin-bottom:20px;gap:10px}
+.settings-avatar{width:80px;height:80px;border-radius:50%;background:var(--text);color:var(--bg);display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:700;cursor:pointer;position:relative;overflow:hidden}
+.settings-avatar img{width:100%;height:100%;object-fit:cover}
+.settings-avatar-edit{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.6);color:#fff;font-size:0.6rem;padding:4px;text-align:center}
+.settings-field{margin-bottom:14px}
+.settings-field label{display:block;font-size:0.72rem;color:var(--muted);margin-bottom:4px;font-weight:500}
+.settings-field input{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:0.88rem;font-family:inherit;outline:none;background:var(--bg);color:var(--text)}
+.settings-field input:focus{border-color:var(--text)}
+.settings-save{width:100%;padding:12px;background:var(--text);color:var(--bg);border:none;border-radius:8px;font-size:0.88rem;font-weight:600;cursor:pointer;font-family:inherit;margin-top:8px}
+.settings-save:active{opacity:.85}
+.settings-msg{font-size:0.78rem;color:#4caf50;text-align:center;margin-top:8px;display:none}
+#settingsFileInput{display:none}
+</style>
+</head><body>
+<div class="login-screen" id="loginScreen">
+<div class="login-box"><h1>MM Studio</h1><p>Настройки</p>
+<input type="text" id="usernameInput" placeholder="Логин" autofocus>
+<input type="password" id="passwordInput" placeholder="Пароль">
+<button onclick="login()">Войти</button>
+<div class="login-error" id="loginError">Неверный логин или пароль</div>
+</div></div>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+<div class="admin" id="adminPanel">
+<nav class="sidebar" id="sidebar"><div class="sidebar-header"><h1>MM Studio</h1><p>Админ-панель</p></div><div class="sidebar-nav"><a class="nav-item" href="index.html"><span class="material-icons">home</span><span class="nav-item-text">Главная</span></a><div class="nav-group"><div class="nav-item nav-group-header" onclick="toggleNavGroup(this.parentElement)"><span class="material-icons">storage</span><span class="nav-item-text">База данных</span><span class="nav-arrow">&#9654;</span></div><div class="nav-group-body"><div class="nav-group"><div class="nav-item sub nav-group-header" onclick="toggleNavGroup(this.parentElement)"><span class="nav-item-text">Бизнес</span><span class="nav-arrow">&#9654;</span></div><div class="nav-group-body"><a class="nav-item sub2" href="plan.html"><span class="nav-item-text">План</span></a><a class="nav-item sub2" href="prices.html"><span class="nav-item-text">Цены</span></a><a class="nav-item sub2" href="proposals.html"><span class="nav-item-text">Идеи</span></a></div></div><div class="nav-group"><div class="nav-item sub nav-group-header" onclick="toggleNavGroup(this.parentElement)"><span class="nav-item-text">Мастерская</span><span class="nav-arrow">&#9654;</span></div><div class="nav-group-body"><a class="nav-item sub2" href="inventory.html"><span class="nav-item-text">Инструменты</span></a><a class="nav-item sub2" href="machines.html"><span class="nav-item-text">Станки</span></a><a class="nav-item sub2" href="materials.html"><span class="nav-item-text">Материалы</span></a></div></div><div class="nav-group"><div class="nav-item sub nav-group-header" onclick="toggleNavGroup(this.parentElement)"><span class="nav-item-text">Цифровое</span><span class="nav-arrow">&#9654;</span></div><div class="nav-group-body"><a class="nav-item sub2" href="print3d.html"><span class="nav-item-text">3D печать</span></a><a class="nav-item sub2" href="marketing.html"><span class="nav-item-text">Маркетинг</span></a></div></div></div></div><a class="nav-item" href="chats.html"><span class="material-icons">chat</span><span class="nav-item-text">Чат</span></a><a class="nav-item" href="notes.html"><span class="material-icons">sticky_note_2</span><span class="nav-item-text">Заметки</span></a><a class="nav-item active" href="settings.html"><span class="material-icons">settings</span><span class="nav-item-text">Настройки</span></a></div><div class="theme-toggle" onclick="toggleTheme()"><span class="material-icons" id="themeIcon">dark_mode</span><span id="themeLabel">Тёмная тема</span></div><div class="sidebar-footer"><button onclick="expandAll()">+</button><button onclick="collapseAll()">-</button><button onclick="logout()">Выйти</button></div></nav>
+<div class="main"><div class="main-header"><button class="burger" onclick="toggleSidebar()">&#9776;</button><div class="main-title">Настройки</div></div><div class="main-content">
+<div class="card">
+<div class="settings-avatar-wrap">
+  <div class="settings-avatar" id="settingsAvatar" onclick="document.getElementById('settingsFileInput').click()">
+    <span id="settingsAvatarText">Т</span>
+    <div class="settings-avatar-edit">Изменить</div>
+  </div>
+  <input type="file" id="settingsFileInput" accept="image/*" onchange="handleAvatar(event)">
+</div>
+<div class="settings-field"><label>Отображаемое имя</label><input type="text" id="settingsName" placeholder="Ваше имя"></div>
+<div class="settings-field"><label>Новый пароль</label><input type="password" id="settingsPass" placeholder="Оставьте пустым чтобы не менять"></div>
+<div class="settings-field"><label>Текущий пароль (для подтверждения)</label><input type="password" id="settingsPassConfirm" placeholder="Введите текущий пароль"></div>
+<button class="settings-save" onclick="saveSettings()">Сохранить</button>
+<div class="settings-msg" id="settingsMsg">Настройки сохранены!</div>
+</div>
+</div></div></div>
+<script src="data.js"></script>
+<script src="app.js?v=2"></script>
+<script>
+var SET_CFG={apiKey:"AIzaSyD3XHJ3xdeJC_ALeIK4nOf1EASO39W3Gh0",authDomain:"mmstudio-86917.firebaseapp.com",databaseURL:"https://mmstudio-86917-default-rtdb.europe-west1.firebasedatabase.app",projectId:"mmstudio-86917",storageBucket:"mmstudio-86917.firebasestorage.app",messagingSenderId:"466384625481",appId:"1:466384625481:web:fb4bb7144d0d329be8c498"};
+var sDb=null;
+var USERS={"Telman":"Kn0pKa78","Anastasia":"mm2026"};
+var NAMES={telman:"Тельман",anastasia:"Анастасия"};
+function getMyId(){return(localStorage.getItem("admin_user")||"").toLowerCase();}
+function initSettings(){
+  var myId=getMyId();if(!myId)return;
+  try{if(!firebase.apps.length)firebase.initializeApp(SET_CFG);sDb=firebase.database();}catch(e){return;}
+  sDb.ref("settings/"+myId).on("value",function(snap){
+    var v=snap.val()||{};
+    if(v.displayName){
+      document.getElementById("settingsName").value=v.displayName;
+      document.getElementById("settingsAvatarText").textContent=v.displayName.charAt(0);
+    }else{
+      document.getElementById("settingsAvatarText").textContent=(NAMES[myId]||myId).charAt(0);
+    }
+    if(v.photo){
+      var av=document.getElementById("settingsAvatar");
+      var existing=av.querySelector("img");
+      if(!existing){var img=document.createElement("img");av.insertBefore(img,av.firstChild);existing=img;}
+      existing.src=v.photo;
+    }
+  });
+}
+function handleAvatar(e){
+  var file=e.target.files[0];if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(ev){
+    var dataUrl=ev.target.result;
+    var av=document.getElementById("settingsAvatar");
+    var existing=av.querySelector("img");
+    if(!existing){var img=document.createElement("img");av.insertBefore(img,av.firstChild);existing=img;}
+    existing.src=dataUrl;
+    av.dataset.photo=dataUrl;
+  };
+  reader.readAsDataURL(file);
+}
+function saveSettings(){
+  var myId=getMyId();if(!myId||!sDb)return;
+  var name=document.getElementById("settingsName").value.trim();
+  var newPass=document.getElementById("settingsPass").value;
+  var confirmPass=document.getElementById("settingsPassConfirm").value;
+  var updates={};
+  if(name)updates.displayName=name;
+  var av=document.getElementById("settingsAvatar");
+  if(av.dataset.photo)updates.photo=av.dataset.photo;
+  if(newPass){
+    if(!confirmPass){alert("Введите текущий пароль для подтверждения");return;}
+    var curPass=USERS[Object.keys(USERS).find(function(k){return k.toLowerCase()===myId;})]||"";
+    if(confirmPass!==curPass){
+      sDb.ref("settings/"+myId+"/password").once("value",function(snap){
+        var storedPass=snap.val();
+        if(confirmPass===storedPass||confirmPass===curPass){
+          sDb.ref("settings/"+myId+"/password").set(newPass);
+          showSaved();
+        }else alert("Неверный текущий пароль");
+      });
+      return;
+    }
+    updates.password=newPass;
+  }
+  sDb.ref("settings/"+myId).update(updates).then(showSaved);
+}
+function showSaved(){
+  var msg=document.getElementById("settingsMsg");
+  msg.style.display="block";
+  setTimeout(function(){msg.style.display="none";},2000);
+}
+if(localStorage.getItem("admin_auth")==="1")initSettings();
+</script>
+</body></html>

@@ -1,16 +1,26 @@
 
 var USERS={"Telman":"Kn0pKa78","Anastasia":"mm2026"};
+var USERS_FB=null;
 var EDIT={section:null,origIdx:-1};
 
 function login(){
   var u=document.getElementById("usernameInput").value;
   var p=document.getElementById("passwordInput").value;
   if(USERS[u]&&USERS[u]===p){
-    document.getElementById("loginScreen").style.display="none";
-    document.getElementById("adminPanel").style.display="flex";
-    localStorage.setItem("admin_auth","1");localStorage.setItem("admin_user",u);
-    showUser();
-  }else document.getElementById("loginError").style.display="block";
+    doLoginLocal(u);
+  }else{
+    try{if(!firebase.apps.length)firebase.initializeApp({apiKey:"AIzaSyD3XHJ3xdeJC_ALeIK4nOf1EASO39W3Gh0",authDomain:"mmstudio-86917.firebaseapp.com",databaseURL:"https://mmstudio-86917-default-rtdb.europe-west1.firebasedatabase.app",projectId:"mmstudio-86917",storageBucket:"mmstudio-86917.firebasestorage.app",messagingSenderId:"466384625481",appId:"1:466384625481:web:fb4bb7144d0d329be8c498"});}catch(e){}
+    firebase.database().ref("settings/"+u.toLowerCase()+"/password").once("value",function(snap){
+      if(snap.val()===p)doLoginLocal(u);
+      else document.getElementById("loginError").style.display="block";
+    });
+  }
+}
+function doLoginLocal(u){
+  document.getElementById("loginScreen").style.display="none";
+  document.getElementById("adminPanel").style.display="flex";
+  localStorage.setItem("admin_auth","1");localStorage.setItem("admin_user",u);
+  showUser();
 }
 function logout(){localStorage.removeItem("admin_auth");localStorage.removeItem("admin_user");window.location.href="index.html";}
 function showUser(){var u=localStorage.getItem("admin_user");document.querySelectorAll(".user-name").forEach(function(e){if(u)e.textContent=u;});}
