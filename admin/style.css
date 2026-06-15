@@ -42,7 +42,7 @@ html.dark{--bg:#111;--surface:#1a1a1a;--text:#e8e8e8;--text2:#aaa;--muted:#777;-
 .ms-popup-contact-last{font-size:0.72rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ms-popup-chat{flex:1;display:none;flex-direction:column}
 .ms-popup-chat.open{display:flex}
-.ms-popup-chat-list{display:none}
+.ms-popup-chat-list{display:flex;flex-direction:column;flex:1;overflow:hidden}
 .ms-popup-chat-topbar{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border);flex-shrink:0}
 .ms-popup-chat-topbar button{background:none;border:none;cursor:pointer;font-size:1rem;color:var(--muted);padding:4px}
 .ms-popup-chat-topbar .name{font-weight:600;font-size:0.82rem;flex:1}

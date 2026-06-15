@@ -291,7 +291,8 @@ if(localStorage.getItem("admin_auth")==="1"){
   var ls=document.getElementById("loginScreen");if(ls)ls.style.display="none";
   var ap=document.getElementById("adminPanel");if(ap)ap.style.display="flex";
   showUser();
-  initPopupChat();
+  function tryInitPopup(){if(typeof firebase!=="undefined"&&firebase.apps){initPopupChat();}else{setTimeout(tryInitPopup,200);}}
+  tryInitPopup();
 }
 applyTheme();
 (function(){var si=document.getElementById("usernameInput");var pi=document.getElementById("passwordInput");if(si)si.addEventListener("keydown",function(e){if(e.key==="Enter")login();});if(pi)pi.addEventListener("keydown",function(e){if(e.key==="Enter")login();});})();
