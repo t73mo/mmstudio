@@ -149,6 +149,7 @@ html,body{height:100dvh;height:100%;overflow:hidden;position:fixed;width:100%}
   .ms-chat-topbar .back-btn{display:block}
   .bottom-nav{display:flex}
 }
+body.chat-open .bottom-nav{display:none!important}
 @media(min-width:769px){
   .ms-messages{padding:16px 24px}
   .ms-msg{max-width:55%}
@@ -438,11 +439,13 @@ function openChat(uid){
   markContactRead(uid);
   document.getElementById("msChat").classList.add("open");
   document.getElementById("msContacts").classList.add("hidden");
+  document.body.classList.add("chat-open");
 }
 
 function goBackContacts(){
   document.getElementById("msChat").classList.remove("open");
   document.getElementById("msContacts").classList.remove("hidden");
+  document.body.classList.remove("chat-open");
 }
 
 function markContactRead(uid){
