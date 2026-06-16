@@ -162,13 +162,13 @@ function doSearch(q){
   if(!q||q.length<2){if(r)r.style.display="none";return;}
   var lower=q.toLowerCase(),found=[];
   for(var sid in APP_DATA){
-    var sec=APP_DATA[sid];var rows=sec.rows;
+    var sec=APP_DATA[sid];var rows=getMergedRows(sid);
     for(var i=0;i<rows.length;i++){
       if(found.length>=30)break;
-      var text="";for(var j=0;j<rows[i].length;j++)text+=rows[i][j]+" ";
+      var text="";for(var j=0;j<rows[i].row.length;j++)text+=rows[i].row[j]+" ";
       text=text.toLowerCase();
-      var title2="";for(var j=0;j<rows[i].length;j++)if(rows[i][j]){title2=rows[i][j];break;}
-      if(text.indexOf(lower)!==-1)found.push({href:sid+".html?open="+i,tab:sec.label,title:title2});
+      var title2="";for(var j=0;j<rows[i].row.length;j++)if(rows[i].row[j]){title2=rows[i].row[j];break;}
+      if(text.indexOf(lower)!==-1)found.push({href:sid+".html?open="+rows[i].origIdx,tab:sec.label,title:title2});
     }
   }
   if(!r)return;
@@ -176,7 +176,7 @@ function doSearch(q){
   var html="";
   for(var j=0;j<found.length;j++){
     var f=found[j];var qe=q.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
-    var t=f.title.replace(new RegExp("("+qe+")","gi"),"<mark>$1</mark>");
+    var t=escHtml(f.title).replace(new RegExp("("+qe+")","gi"),"<mark>$1</mark>");
     html+='<a class="search-result" href="'+f.href+'"><span class="sr-tab">'+escHtml(f.tab)+'</span><span class="sr-text">'+t+'</span></a>';
   }
   r.innerHTML=html;r.style.display="block";

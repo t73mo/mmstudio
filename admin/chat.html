@@ -143,7 +143,9 @@ html,body{height:100dvh;height:100%;overflow:hidden;position:fixed;width:100%}
 
 @media(max-width:1024px){.ms-sidebar{display:none}}
 @media(max-width:768px){
-  .ms-contacts{width:100%;border-right:none}
+  .ms-contacts{width:100%;border-right:none;overflow:hidden}
+  .ms-contacts-header{overflow:hidden}
+  .ms-filters{flex-wrap:wrap}
   .ms-chat{position:absolute;inset:0;z-index:50;transform:translateX(100%);transition:transform .25s ease;background:var(--bg)}
   .ms-chat.open{transform:translateX(0)}
   .ms-chat-topbar .back-btn{display:block}
@@ -461,7 +463,12 @@ function markContactRead(uid){
 function loadMessages(){
   db.ref("messages").orderByChild("time").on("value",function(snap){
     allMsgs=[];
-    snap.forEach(function(ch){allMsgs.push(Object.assign({id:ch.key},ch.val()));});
+    snap.forEach(function(ch){
+      var m=ch.val();
+      if(activeContact&&(m.user===activeContact||m.user===myId)){
+        allMsgs.push(Object.assign({id:ch.key},m));
+      }
+    });
     renderMessages(allMsgs);
   });
 }
@@ -692,10 +699,10 @@ function openPhoto(src){document.getElementById("photoOverlayImg").src=src;docum
 function closePhoto(){document.getElementById("photoOverlay").classList.remove("open");}
 
 function markRead(){
-  if(!myId||!db)return;
-  db.ref("messages").once("value",function(snap){
+  if(!myId||!db||!activeContact)return;
+  db.ref("messages").orderByChild("user").equalTo(activeContact).once("value",function(snap){
     var updates={};
-    snap.forEach(function(ch){var m=ch.val();if(m.user!==myId&&!m.read)updates[ch.key+"/read"]=true;});
+    snap.forEach(function(ch){var m=ch.val();if(!m.read)updates[ch.key+"/read"]=true;});
     if(Object.keys(updates).length)db.ref("messages").update(updates);
   });
 }

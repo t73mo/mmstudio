@@ -141,11 +141,11 @@ function handleAvatar(e){
   };
   reader.readAsDataURL(file);
 }
+var _saveTimer=null;
 function autoSave(){
   var myId=getMyId();if(!myId)return;
-  if(typeof firebase==="undefined"){return;}
-  if(!sDb){try{if(!firebase.apps.length)firebase.initializeApp(SET_CFG);sDb=firebase.database();}catch(e){console.error("autoSave init error:",e);return;}}
-  var name=document.getElementById("settingsName").value.trim();
+  clearTimeout(_saveTimer);
+  _saveTimer=setTimeout(function(){
   var birthday=document.getElementById("settingsBirthday").value;
   var updates={};
   if(name)updates.displayName=name;

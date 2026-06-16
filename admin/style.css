@@ -233,8 +233,8 @@ html.dark .search-result mark{background:#554400;color:#ffeaa7}
   .chat-contacts{display:flex;flex-direction:column}
 }
 
-.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);z-index:100;padding-bottom:env(safe-area-inset-bottom);flex-direction:row;align-items:stretch;height:56px}
-.bottom-nav a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:6px 0 4px;text-decoration:none;color:var(--muted);font-size:0.55rem;-webkit-tap-highlight-color:transparent;transition:color .15s}
+.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);z-index:100;padding-bottom:env(safe-area-inset-bottom);flex-direction:row;align-items:stretch;height:56px;overflow:hidden}
+.bottom-nav a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:6px 2px 4px;text-decoration:none;color:var(--muted);font-size:0.55rem;-webkit-tap-highlight-color:transparent;transition:color .15s;overflow:hidden}
 .bottom-nav a:active{opacity:.7}
 .bottom-nav a .material-icons{font-size:22px;line-height:1}
 .db-popup-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;align-items:flex-end;justify-content:center}
