@@ -298,4 +298,20 @@ if(localStorage.getItem("admin_auth")==="1"){
   showUser();
 }
 applyTheme();
+(function(){
+  var c=["https://www.gstatic.com","https://mmstudio-86917-default-rtdb.europe-west1.firebasedatabase.app"];
+  c.forEach(function(h){var l=document.createElement("link");l.rel="preconnect";l.href=h;document.head.appendChild(l);});
+})();
 (function(){var si=document.getElementById("usernameInput");var pi=document.getElementById("passwordInput");if(si)si.addEventListener("keydown",function(e){if(e.key==="Enter")login();});if(pi)pi.addEventListener("keydown",function(e){if(e.key==="Enter")login();});})();
+
+(function(){
+  var pages=["index.html","chat.html","plan.html","prices.html","proposals.html","inventory.html","machines.html","materials.html","print3d.html","marketing.html","notes.html","settings.html","cms.html"];
+  var cur=location.pathname.split("/").pop()||"index.html";
+  pages.forEach(function(p){
+    if(p!==cur){
+      var l=document.createElement("link");
+      l.rel="prefetch";l.href=p;l.crossOrigin="anonymous";
+      document.head.appendChild(l);
+    }
+  });
+})();
