@@ -721,5 +721,36 @@ if(localStorage.getItem("admin_auth")==="1"){
     var l=document.createElement("link");l.rel="prefetch";l.href=p;l.crossOrigin="anonymous";document.head.appendChild(l);
   });
 })();
+(function(){
+  var dbItems=[
+    {href:"plan.html",icon:"assignment",label:"План"},
+    {href:"prices.html",icon:"attach_money",label:"Цены"},
+    {href:"proposals.html",icon:"lightbulb",label:"Идеи"},
+    {href:"inventory.html",icon:"build",label:"Инструменты"},
+    {href:"machines.html",icon:"settings",label:"Станки"},
+    {href:"materials.html",icon:"inventory_2",label:"Материалы"},
+    {href:"print3d.html",icon:"view_in_ar",label:"3D печать"},
+    {href:"marketing.html",icon:"campaign",label:"Маркетинг"},
+    {href:"cms.html",icon:"web",label:"CMS"}
+  ];
+  var html='<div class="db-popup-overlay" id="dbPopupOverlay" onclick="closeDbPopup()"><div class="db-popup" onclick="event.stopPropagation()"><h3>База данных</h3><div class="db-popup-grid">';
+  dbItems.forEach(function(it){
+    html+='<a class="db-popup-item" href="'+it.href+'"><span class="material-icons">'+it.icon+'</span><span>'+it.label+'</span></a>';
+  });
+  html+='</div></div></div>';
+  document.body.insertAdjacentHTML("beforeend",html);
+  var items=document.querySelectorAll(".bottom-nav a");
+  items.forEach(function(a){
+    if(a.href&&a.href.indexOf("plan.html")!==-1){
+      a.removeAttribute("href");
+      a.addEventListener("click",function(e){
+        e.preventDefault();
+        var ov=document.getElementById("dbPopupOverlay");
+        if(ov)ov.classList.add("open");
+      });
+    }
+  });
+})();
+function closeDbPopup(){var ov=document.getElementById("dbPopupOverlay");if(ov)ov.classList.remove("open");}
 </script>
 </body></html>
